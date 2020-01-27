@@ -1,20 +1,19 @@
 #include "main.h"
+#include <iomanip>
+#include "motor.hpp"
+#include "okapi/api.hpp"
+//#include "gui.h"
+
 
 int auton_sel = 0;
+lv_obj_t *tabview;
 lv_obj_t * g_sb_label;
 lv_obj_t * tab1;
-
-static lv_res_t btn_click_action(lv_obj_t * btn) {
-   uint8_t id = lv_obj_get_free_num(btn);
-   static char buffer[32];
-   auton_sel = id;
-
-   snprintf(buffer, 32, "Selection is %d \n", id);
-   lv_label_set_text(g_sb_label, buffer);
-   lv_obj_align(g_sb_label, NULL, LV_ALIGN_CENTER, 0, 0); // must be after set_text
-
-   return LV_RES_OK; /*Return OK if the button is not deleted*/
-}
+lv_obj_t * tab2;
+lv_obj_t * tab3;
+lv_obj_t * tab4;
+lv_obj_t * btnm;
+char mytext[100];
 
 static lv_res_t btnm_action(lv_obj_t * btnm, const char *txt) {
 
@@ -60,8 +59,8 @@ void gui_btnm(void) {
   // Create a default button matrix* no repeat
   lv_obj_t *btnm = lv_btnm_create(tab1, NULL);
   lv_obj_set_size(btnm, lv_obj_get_width(tab1),
-      lv_obj_get_height(tab1) - 32);
-
+                  lv_obj_get_height(tab1) - 36);
+  lv_obj_set_style(btnm, &lv_style_pretty_color);
   lv_btnm_set_map(btnm, btnm_map);
   lv_btnm_set_action(btnm, btnm_action);
 }
@@ -70,7 +69,7 @@ void gui_btnm(void) {
 void lv_ex_tabview_1(void)
 {
     /*Create a Tab view object*/
-    lv_obj_t *tabview;
+
     tabview = lv_tabview_create(lv_scr_act(), NULL);
 		lv_tabview_set_sliding(tabview, false);
 
@@ -156,7 +155,9 @@ void competition_initialize() {}
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
-void autonomous() {}
+void autonomous() {
+  lv_tabview_set_tab_act(tabview, 2, LV_ANIM_NONE);
+}
 
 /**
  * Runs the operator control code. This function will be started in its own task
@@ -172,17 +173,35 @@ void autonomous() {}
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-	pros::Controller master(pros::E_CONTROLLER_MASTER);
-	pros::Motor left_mtr(1);
-	pros::Motor right_mtr(2);
+  lv_tabview_set_tab_act(tabview, 3, LV_ANIM_NONE);
+
+  /*Create a new label*/
+  lv_obj_t * txt = lv_label_create(tab3, NULL);
+  //lv_obj_set_style(txt, &style_txt);                    /*Set the created style*/
+  lv_label_set_long_mode(txt, LV_LABEL_LONG_BREAK);     /*Break the long lines*/
+  lv_label_set_recolor(txt, true);                      /*Enable re-coloring by commands in the text*/
+  lv_label_set_align(txt, LV_LABEL_ALIGN_LEFT);       /*Center aligned lines*/
+  lv_label_set_text(txt, NULL);
+  lv_obj_set_width(txt, 500);                           /*Set a width*/
+  lv_obj_align(txt, NULL, LV_ALIGN_IN_TOP_LEFT, 10, 20);      /*Align to center*/
 
 	while (true) {
 
 		int left = master.get_analog(ANALOG_LEFT_Y);
 		int right = master.get_analog(ANALOG_RIGHT_Y);
 
-		left_mtr = left;
-		right_mtr = right;
+    sprintf(mytext, "claw potentiameter: %d, claw %8.2f \n"
+                "tray: %8.2f, set zero: %d\n"
+                "leftfront:%8.2f rightfront:%8.2f\n"
+                "gyro:%8.2f\n",
+       potentiameter.get_value(),
+       arm.get_position(),
+       tray.get_position(), limitswitch.get_value(),
+       left_front.get_position(), right_front.get_position(),
+       gyro.get_value()
+    );
+    lv_label_set_text(txt, mytext);
+
 		pros::delay(20);
 	}
 }
