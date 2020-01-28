@@ -13,11 +13,12 @@ lv_obj_t * tab2;
 lv_obj_t * tab3;
 lv_obj_t * tab4;
 lv_obj_t * btnm;
-char mytext[100];
+lv_obj_t * txt;
 
-static lv_res_t btnm_action(lv_obj_t * btnm, const char *txt) {
 
-  int btnm_num = atoi(txt);
+static lv_res_t btnm_action(lv_obj_t * btnm, const char * bmtxt) {
+
+  int btnm_num = atoi(bmtxt);
 
   switch (btnm_num) {
   case 1:
@@ -58,7 +59,7 @@ void gui_btnm(void) {
 
   // Create a default button matrix* no repeat
   lv_obj_t *btnm = lv_btnm_create(tab1, NULL);
-  lv_obj_set_size(btnm, lv_obj_get_width(tab1),
+  lv_obj_set_size(btnm, lv_obj_get_width(tab1) - 20,
                   lv_obj_get_height(tab1) - 36);
   lv_obj_set_style(btnm, &lv_style_pretty_color);
   lv_btnm_set_map(btnm, btnm_map);
@@ -84,10 +85,12 @@ void lv_ex_tabview_1(void)
     /*Add content to the tabs*/
     lv_obj_t * label = lv_label_create(tab1, NULL);
     lv_label_set_text(label, "select your autonomous");
+    lv_obj_align(label, NULL, LV_ALIGN_IN_TOP_LEFT, 0, -20);
 
 		g_sb_label = lv_label_create(tab1, NULL);
 		lv_obj_set_style(g_sb_label, &lv_style_pretty_color);
 		lv_obj_align(g_sb_label, NULL, LV_ALIGN_CENTER, 0, 0);
+    lv_label_set_text(g_sb_label, "auto select");
 
 
     label = lv_label_create(tab2, NULL);
@@ -105,9 +108,9 @@ void lv_ex_tabview_1(void)
 
 	  // Create a default button matrix* no repeat
 	  lv_obj_t *btnm = lv_btnm_create(tab1, NULL);
-	  lv_obj_set_size(btnm, lv_obj_get_width(tab1),
+	  lv_obj_set_size(btnm, lv_obj_get_width(tab1)-20,
 	      lv_obj_get_height(tab1)-30);
-
+    //lv_obj_set_style(btnm, &lv_style_pretty_color);
 	  lv_btnm_set_map(btnm, btnm_map);
 	  lv_btnm_set_action(btnm, btnm_action);
 }
@@ -156,7 +159,7 @@ void competition_initialize() {}
  * from where it left off.
  */
 void autonomous() {
-  lv_tabview_set_tab_act(tabview, 2, LV_ANIM_NONE);
+  lv_tabview_set_tab_act(tabview, 1, LV_ANIM_NONE);
 }
 
 /**
@@ -173,7 +176,8 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-  lv_tabview_set_tab_act(tabview, 3, LV_ANIM_NONE);
+  lv_tabview_set_tab_act(tabview, 2, LV_ANIM_NONE);
+  char mytext[100];
 
   /*Create a new label*/
   lv_obj_t * txt = lv_label_create(tab3, NULL);
@@ -183,7 +187,7 @@ void opcontrol() {
   lv_label_set_align(txt, LV_LABEL_ALIGN_LEFT);       /*Center aligned lines*/
   lv_label_set_text(txt, NULL);
   lv_obj_set_width(txt, 500);                           /*Set a width*/
-  lv_obj_align(txt, NULL, LV_ALIGN_IN_TOP_LEFT, 10, 20);      /*Align to center*/
+  //lv_obj_align(txt, NULL, LV_ALIGN_IN_TOP_LEFT, 10, 20);      /*Align to center*/
 
 	while (true) {
 
