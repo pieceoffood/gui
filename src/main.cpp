@@ -53,14 +53,15 @@ break;
 
 void gui_btnm(void) {
   // Create a button descriptor string array w/ no repeat "\224"
+  //gui_btnm();
   static const char * btnm_map[] = { "\2241", "\2242", "\2243", "\n",
                                      "\2244", "\2245", "\2246", "" };
 
   // Create a default button matrix* no repeat
   lv_obj_t *btnm = lv_btnm_create(tab1, NULL);
-  lv_obj_set_size(btnm, lv_obj_get_width(tab1) - 20,
-                  lv_obj_get_height(tab1) - 36);
-  lv_obj_set_style(btnm, &lv_style_pretty_color);
+  lv_obj_set_size(btnm, lv_obj_get_width(tab1)-20,
+      lv_obj_get_height(tab1)-30);
+  //lv_obj_set_style(btnm,  style1);
   lv_btnm_set_map(btnm, btnm_map);
   lv_btnm_set_action(btnm, btnm_action);
 }
@@ -97,21 +98,19 @@ void lv_ex_tabview_1(void)
 
     //label = lv_label_create(tab3, NULL);
     //lv_label_set_text(label, NULL);
+    txt = lv_label_create(tab3, NULL);
+    //lv_obj_set_style(txt, &style_txt);                    /*Set the created style*/
+    lv_label_set_long_mode(txt, LV_LABEL_LONG_BREAK);     /*Break the long lines*/
+    lv_label_set_recolor(txt, true);                      /*Enable re-coloring by commands in the text*/
+    lv_label_set_align(txt, LV_LABEL_ALIGN_LEFT);       /*Center aligned lines*/
+    lv_label_set_text(txt, NULL);
+    lv_obj_set_width(txt, 500);                           /*Set a width*/
+    lv_obj_align(txt, NULL, LV_ALIGN_IN_TOP_LEFT, 10, 20);      /*Align to center*/
 
 		label = lv_label_create(tab4, NULL);
     lv_label_set_text(label, "tune your PID");
 
-		//gui_btnm();
-		static const char * btnm_map[] = { "\2241", "\2242", "\2243", "\n",
-	                                     "\2244", "\2245", "\2246", "" };
-
-	  // Create a default button matrix* no repeat
-	  lv_obj_t *btnm = lv_btnm_create(tab1, NULL);
-	  lv_obj_set_size(btnm, lv_obj_get_width(tab1)-20,
-	      lv_obj_get_height(tab1)-30);
-    //lv_obj_set_style(btnm, &lv_style_pretty_color);
-	  lv_btnm_set_map(btnm, btnm_map);
-	  lv_btnm_set_action(btnm, btnm_action);
+    gui_btnm();
 }
 
 /**
@@ -180,14 +179,7 @@ void opcontrol() {
   char mytext[100];
 
   /*Create a new label*/
-  txt = lv_label_create(tab3, NULL);
-  //lv_obj_set_style(txt, &style_txt);                    /*Set the created style*/
-  lv_label_set_long_mode(txt, LV_LABEL_LONG_BREAK);     /*Break the long lines*/
-  lv_label_set_recolor(txt, true);                      /*Enable re-coloring by commands in the text*/
-  lv_label_set_align(txt, LV_LABEL_ALIGN_LEFT);       /*Center aligned lines*/
-  lv_label_set_text(txt, NULL);
-  lv_obj_set_width(txt, 500);                           /*Set a width*/
-  lv_obj_align(txt, NULL, LV_ALIGN_IN_TOP_LEFT, 10, 20);      /*Align to center*/
+
 
 	while (true) {
 
