@@ -6,15 +6,14 @@
 
 
 int auton_sel = 0;
-lv_obj_t *tabview;
+lv_obj_t * tabview;
 lv_obj_t * g_sb_label;
 lv_obj_t * tab1;
 lv_obj_t * tab2;
 lv_obj_t * tab3;
 lv_obj_t * tab4;
-lv_obj_t * btnm;
 lv_obj_t * txt;
-
+lv_obj_t * label;
 
 static lv_res_t btnm_action(lv_obj_t * btnm, const char * bmtxt) {
 
@@ -75,17 +74,17 @@ void lv_ex_tabview_1(void)
 		lv_tabview_set_sliding(tabview, false);
 
     /*Add 4 tabs (the tabs are page (lv_page) and can be scrolled*/
-		lv_obj_t *tab1 = lv_tabview_add_tab(tabview, "Select");
-    lv_obj_t *tab2 = lv_tabview_add_tab(tabview, "Auto");
-    lv_obj_t *tab3 = lv_tabview_add_tab(tabview, "Driver");
-    lv_obj_t *tab4 = lv_tabview_add_tab(tabview, "PID");
+		tab1 = lv_tabview_add_tab(tabview, "Select");
+    tab2 = lv_tabview_add_tab(tabview, "Auto");
+    tab3 = lv_tabview_add_tab(tabview, "Driver");
+    tab4 = lv_tabview_add_tab(tabview, "PID");
 
 
 
     /*Add content to the tabs*/
-    lv_obj_t * label = lv_label_create(tab1, NULL);
-    lv_label_set_text(label, "select your autonomous");
-    lv_obj_align(label, NULL, LV_ALIGN_IN_TOP_LEFT, 0, -20);
+    //label = lv_label_create(tab1, NULL);
+    //lv_label_set_text(label, "select your autonomous");
+    //lv_obj_align(label, NULL, LV_ALIGN_IN_TOP_LEFT, 0, 0);
 
 		g_sb_label = lv_label_create(tab1, NULL);
 		lv_obj_set_style(g_sb_label, &lv_style_pretty_color);
@@ -96,8 +95,8 @@ void lv_ex_tabview_1(void)
     label = lv_label_create(tab2, NULL);
     lv_label_set_text(label, "Second tab");
 
-    label = lv_label_create(tab3, NULL);
-    lv_label_set_text(label, "Third tab");
+    //label = lv_label_create(tab3, NULL);
+    //lv_label_set_text(label, NULL);
 
 		label = lv_label_create(tab4, NULL);
     lv_label_set_text(label, "tune your PID");
@@ -122,6 +121,7 @@ void lv_ex_tabview_1(void)
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
+  pros::delay(10);
 	lv_ex_tabview_1();
 
 
@@ -180,14 +180,14 @@ void opcontrol() {
   char mytext[100];
 
   /*Create a new label*/
-  lv_obj_t * txt = lv_label_create(tab3, NULL);
+  txt = lv_label_create(tab3, NULL);
   //lv_obj_set_style(txt, &style_txt);                    /*Set the created style*/
   lv_label_set_long_mode(txt, LV_LABEL_LONG_BREAK);     /*Break the long lines*/
   lv_label_set_recolor(txt, true);                      /*Enable re-coloring by commands in the text*/
   lv_label_set_align(txt, LV_LABEL_ALIGN_LEFT);       /*Center aligned lines*/
   lv_label_set_text(txt, NULL);
   lv_obj_set_width(txt, 500);                           /*Set a width*/
-  //lv_obj_align(txt, NULL, LV_ALIGN_IN_TOP_LEFT, 10, 20);      /*Align to center*/
+  lv_obj_align(txt, NULL, LV_ALIGN_IN_TOP_LEFT, 10, 20);      /*Align to center*/
 
 	while (true) {
 
@@ -206,6 +206,6 @@ void opcontrol() {
     );
     lv_label_set_text(txt, mytext);
 
-		pros::delay(20);
+		pros::delay(10);
 	}
 }
