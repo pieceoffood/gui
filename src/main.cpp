@@ -3,7 +3,17 @@
 #include "motor.hpp"
 #include "okapi/api.hpp"
 #include "gui.h"
+#include "MiniPID.h"
 
+/*
+cd (change directory)
+cd .. (go up one level)
+prosv5 make clean (clean everything)
+prosv5 build-compile-commands (compile the code)
+prosv5 upload --slot 5 (upload the program to V5 slot 5)
+prosv5 v5 rm-all
+prosv5 v5 rm-file slot_4.bin --erase-all
+*/
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -51,6 +61,36 @@ void competition_initialize() {}
  */
 void autonomous() {
   lv_tabview_set_tab_act(tabview, 1, LV_ANIM_NONE);
+
+    switch (auton_sel) {
+      case 1:
+        // auton1();
+
+      break;
+      case 2:
+        // auton2();
+
+      break;
+      case 3:
+        // auton3();
+
+      break;
+      case 4:
+        // auton4();
+
+      break;
+      case 5:
+        // auton5();
+
+      break;
+      case 6:
+        // auton6();
+
+      break;
+      default:
+        // empty_auton();
+      break;
+    }
 }
 
 /**
