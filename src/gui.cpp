@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <stdlib.h>
-
+#include <string.h>
 
 lv_obj_t * txt ;
 lv_obj_t * tabview ;
@@ -40,7 +40,6 @@ break;
     auton_sel = 6;
 break;
   }
-
   lv_obj_align(g_sb_label, NULL, LV_ALIGN_CENTER, 0, 0); // must be after set_text
 
   return LV_RES_OK; /*Return OK because the button matrix is not deleted*/
@@ -59,6 +58,68 @@ void gui_btnm(void) {
   //lv_obj_set_style(btnm,  style1);
   lv_btnm_set_map(btnm, btnm_map);
   lv_btnm_set_action(btnm, btnm_action);
+}
+
+
+float kP=0.0;
+float kI=0.0;
+float kD=0.0;
+float kM=1.0;
+static lv_res_t pidbtnm_action(lv_obj_t * btnm, const char * bmtxt) {
+  char pidtext[100];
+
+  int btnm_num = atoi(bmtxt);
+  if (strcmp(bmtxt, "redfront")==0) {};
+  switch (btnm_num) {
+  case 1:
+    kP += kM;
+    break;
+  case 2:
+    kP -= kM;
+    break;
+  case 3:
+    kI += kM;
+
+    break;
+  case 4:
+    kI -= kM;
+    break;
+  case 5:
+    kD += kM;
+  break;
+  case 6:
+    kD -= kM;
+   break;
+   case 7:
+    kM = kM*10;
+   break;
+   case 8:
+    kM = kM/10;
+   break;
+  }
+  sprintf(pidtext, "kP %3.2f kI %3.2f  kD %3.2f  kM %4.2f  ",
+              kP, kI, kD, kM
+  );
+  lv_label_set_text(pid_label, pidtext);
+  // must be after set_text
+  lv_obj_align(pid_label, NULL, LV_ALIGN_CENTER, 0, 0);
+  return LV_RES_OK; /*Return OK because the button matrix is not deleted*/
+}
+
+
+void pid_btnm(void) {
+  // Create a button descriptor string array w/ no repeat "\224"
+  //gui_btnm();
+  static const char * btnm_map[] = { "\2241P+", "\2243I+", "\2245D+", "\2247M+", "\n",
+                                     "\2242P-", "\2244I-", "\2246D-", "\2248M-","" };
+
+  // Create a default button matrix* no repeat
+  lv_obj_t *btnm = lv_btnm_create(tab4, NULL);
+  lv_obj_set_size(btnm, lv_obj_get_width(tab1)-30,
+      lv_obj_get_height(tab1)-30);
+  //lv_obj_set_style(btnm,  style1);
+  lv_btnm_set_map(btnm, btnm_map);
+  lv_btnm_set_action(btnm, pidbtnm_action);
 }
 
 
@@ -102,10 +163,14 @@ void lv_ex_tabview_1(void)
     lv_obj_set_width(txt, 500);                           /*Set a width*/
     lv_obj_align(txt, NULL, LV_ALIGN_IN_TOP_LEFT, 10, 20);      /*Align to center*/
 
-		label = lv_label_create(tab4, NULL);
-    lv_label_set_text(label, "tune your PID");
+
+    pid_label = lv_label_create(tab4, NULL);
+		lv_obj_set_style(pid_label, &lv_style_pretty_color);
+    lv_label_set_text(pid_label, "PID tuning");
+    lv_obj_align(pid_label, NULL, LV_ALIGN_CENTER, 0, 0);
 
     gui_btnm();
+    pid_btnm();
 }
 
 
