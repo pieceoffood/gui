@@ -4,6 +4,7 @@
 #include "okapi/api.hpp"
 #include "gui.h"
 #include "MiniPID.h"
+#include "userFn.hpp"
 
 /*
 cd (change directory)
