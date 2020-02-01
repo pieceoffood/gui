@@ -113,8 +113,16 @@ void opcontrol() {
 
   /*Create a new label*/
 
+  master.clear();
+  master.print(0, 0, "VEX");
+  auto timeFlag=pros::millis();
 
 	while (true) {
+    if(pros::millis()-timeFlag>=1000)
+             {
+                    master.print(1, 0, "arm:%8.2f", arm.get_position());
+                    timeFlag=pros::millis();
+             }
 
 		int left = master.get_analog(ANALOG_LEFT_Y);
 		int right = master.get_analog(ANALOG_RIGHT_Y);
