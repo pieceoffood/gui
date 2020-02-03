@@ -116,7 +116,8 @@ void opcontrol() {
   master.clear();
   master.print(0, 0, "VEX");
   auto timeFlag=pros::millis();
-
+  pros::Task tray_control_t(tray_control);
+  pros::Task t(arm_control);
 	while (true) {
     if(pros::millis()-timeFlag>=1000)
              {
@@ -127,7 +128,7 @@ void opcontrol() {
 		int left = master.get_analog(ANALOG_LEFT_Y);
 		int right = master.get_analog(ANALOG_RIGHT_Y);
 
-    sprintf(mytext, "claw potentiameter: %d, claw %8.2f \n"
+    sprintf(mytext, "aarm potentiameter: %d, arm %8.2f \n"
                 "tray: %8.2f, set zero: %d\n"
                 "leftfront:%8.2f rightfront:%8.2f\n"
                 "gyro:%8.2f\n",

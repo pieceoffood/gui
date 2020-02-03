@@ -9,21 +9,22 @@ void basemovePID(double target) {
   char mytext[100];
   lv_obj_t * txt = lv_label_create(lv_scr_act(), NULL);
 
-  pid.setOutputLimits(-30,30);
+  pid.setOutputLimits(-80,80);
   pid.setOutputRampRate(5);
   double start=left_front.get_position();
-  double ticks = (target*900)/(4*M_PI)+start;
-  while (fabs(left_front.get_position()-ticks)>10) {
+  // convert the target in inch to tick
+  double targetTick = (target*900)/(4*M_PI)+start;
+  while (fabs(left_front.get_position()-targetTick)>10) {
     double output=pid.getOutput(left_front.get_position(),
-        ticks);
+        targetTick);
     left_back.move(output);
     left_front.move(output);
     right_back.move(output);
     right_front.move(output);
 
-    printf("base start %8.2f, target %8.2f, base %8.2f\n", start, ticks,left_front.get_position());
+    printf("base start %8.2f, target %8.2f, base %8.2f\n", start, targetTick,left_front.get_position());
     sprintf(mytext, "base start %8.2f\n, target %8.2f\n, base %8.2f\n, output  base %8.2f\n",
-            start, ticks,left_front.get_position(), output
+            start, targetTick,left_front.get_position(), output
          );
     lv_label_set_text(txt, mytext);
     pros::delay(10);
@@ -76,9 +77,9 @@ void baseturn(int right , int speed) // right=positive and left=negative
 
 
 
+
 void  tray_control(void*) {
  pros::Controller master(CONTROLLER_MASTER);
- pros::Task tray_t(tray_pid);
  bool b_toggle = false;
  while (true) {
    if (master.get_digital(DIGITAL_Y)) {
@@ -86,15 +87,11 @@ void  tray_control(void*) {
 
      if (b_toggle) {
        for(int i=0;i<1700;i=i+3) {
-         set_tray_pid(i);
+         tray.move((i-tray.get_position())*0.5);;
          pros::delay(5);
        }
      } else {
-       set_tray_pid(0);
-     }
-
-     while (master.get_digital(DIGITAL_Y)) {
-       pros::delay(1);
+       tray.move(0);
      }
    }
 
@@ -104,30 +101,30 @@ void  tray_control(void*) {
 
 void  arm_control(void*) {
  pros::Controller master(CONTROLLER_MASTER);
- pros::Task arm_t(arm_pid);
+ //pros::Task arm_t(arm_pid);
  bool was_pid;
  while (true) {
    if (master.get_digital(DIGITAL_B)) {
      was_pid = true;
-     arm_t.resume();
-     set_arm_pid(2300);
+     int a_target =1300;
+     arm.move((a_target-arm.get_position())*0.5);
    } else if (master.get_digital(DIGITAL_DOWN)) {
      was_pid = true;
-     arm_t.resume();
-     set_arm_pid(1800);
+     int a_target =800;
+     arm.move((a_target-arm.get_position())*0.5);
    } else {
      if (master.get_digital(DIGITAL_R1)||master.get_digital(DIGITAL_R2)) {
        was_pid = false;
-       set_arm((master.get_digital(DIGITAL_R1)-master.get_digital(DIGITAL_R2))*80);// set arm to slow speed
+       arm.move((master.get_digital(DIGITAL_R1)*80-master.get_digital(DIGITAL_R2)*40));// set arm to slow speed
      } else {
        if (!was_pid) {
-         set_arm(0);
+         arm.move(0);
        }
      }
    }
 
    if (!was_pid) {
-     arm_t.suspend();
+     //arm_t.suspend();
    }
 
    pros::delay(20);

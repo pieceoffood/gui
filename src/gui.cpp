@@ -5,10 +5,16 @@
 #include <stdlib.h>
 #include <string.h>
 
+// forward declaration of following two objects
 lv_obj_t * txt ;
 lv_obj_t * tabview ;
 
 int auton_sel = 0;
+float kP=0.0;
+float kI=0.0;
+float kD=0.0;
+float kM=1.0;
+
 
 static lv_res_t btnm_action(lv_obj_t * btnm, const char * bmtxt) {
 
@@ -60,11 +66,6 @@ void gui_btnm(void) {
   lv_btnm_set_action(btnm, btnm_action);
 }
 
-
-float kP=0.0;
-float kI=0.0;
-float kD=0.0;
-float kM=1.0;
 static lv_res_t pidbtnm_action(lv_obj_t * btnm, const char * bmtxt) {
   char pidtext[100];
 
