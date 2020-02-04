@@ -57,6 +57,28 @@ void baseturnPID(double target) {
 }
 
 
+void armPID(double target) {
+  MiniPID pid=MiniPID(0.3,0,0.1);
+  char mytext[100];
+  lv_obj_t * txt = lv_label_create(lv_scr_act(), NULL);
+
+  pid.setOutputLimits(-80,80);
+  pid.setOutputRampRate(5);
+  double start=arm.get_position();
+  // convert the target in inch to tick
+  while (fabs(arm.get_position()-target)>10) {
+    double output=pid.getOutput(arm.get_position(),
+        target);
+    arm.move(output);
+    printf("arm start %8.2f, target %8.2f, base %8.2f\n", start, target , arm.get_position());
+    sprintf(mytext, "base start %8.2f\n, target %8.2f\n, base %8.2f\n, output  base %8.2f\n",
+            start, target, arm.get_position(), output
+         );
+    lv_label_set_text(txt, mytext);
+    pros::delay(10);
+  }
+}
+
 void basemovement(double distance, int speed)
 {
   double ticks=(distance*900)/(4*M_PI);
@@ -176,33 +198,32 @@ arm_control(void*) {
  }
 }
 */
-
 void  arm_control(void*) {
  pros::Controller master(CONTROLLER_MASTER);
- pros::Task arm_t(arm_pid);
+ //pros::Task arm_t(arm_pid);
+ int a_target;
  bool was_pid;
  while (true) {
    if (master.get_digital(DIGITAL_B)) {
      was_pid = true;
-     arm_t.resume();
-     set_arm_pid(1300);
+     a_target =1300;
    } else if (master.get_digital(DIGITAL_DOWN)) {
      was_pid = true;
-     arm_t.resume();
-     set_arm_pid(900);
+     a_target =800;
    } else {
      if (master.get_digital(DIGITAL_R1)||master.get_digital(DIGITAL_R2)) {
        was_pid = false;
-       set_arm((master.get_digital(DIGITAL_R1)-master.get_digital(DIGITAL_R2))*80);// set arm to slow speed
+       arm.move((master.get_digital(DIGITAL_R1)*80-master.get_digital(DIGITAL_R2)*40));// set arm to slow speed
      } else {
        if (!was_pid) {
-         set_arm(0);
+         arm.move(0);
        }
      }
    }
 
-   if (!was_pid) {
-     arm_t.suspend();
+   if (was_pid) {
+     arm.move((a_target-arm.get_position())*0.5);
+	 //armPID(a_target);
    }
 
    pros::delay(20);
