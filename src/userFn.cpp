@@ -77,9 +77,47 @@ void baseturn(int right , int speed) // right=positive and left=negative
 
 
 
+void set_tray(int input) {
+  tray.move(input);
+}
+
+void set_arm(int input) {
+  arm.move(input);
+}
+
+void set_rollers(int input) {
+  left_roller.move(input);
+  right_roller.move(input);
+}
+
+//PID
+int t_target;
+void set_tray_pid(int input) {
+  t_target = input;
+}
+
+void tray_pid(void*) {
+	while (true) {
+		set_tray((t_target-tray.get_position())*0.5);
+		pros::delay(20);
+	}
+}
+
+int a_target;
+void set_arm_pid(int input) {
+  a_target = input;
+}
+void arm_pid(void*) {
+  while (true) {
+    set_arm((a_target-arm.get_position())*0.5);
+    pros::delay(20);
+  }
+}
+
 
 void  tray_control(void*) {
  pros::Controller master(CONTROLLER_MASTER);
+ pros::Task tray_t(tray_pid);
  bool b_toggle = false;
  while (true) {
    if (master.get_digital(DIGITAL_Y)) {
@@ -87,11 +125,15 @@ void  tray_control(void*) {
 
      if (b_toggle) {
        for(int i=0;i<1700;i=i+3) {
-         tray.move((i-tray.get_position())*0.5);;
+         set_tray_pid(i);
          pros::delay(5);
        }
      } else {
-       tray.move(0);
+       set_tray_pid(0);
+     }
+
+     while (master.get_digital(DIGITAL_Y)) {
+       pros::delay(10);
      }
    }
 
@@ -99,32 +141,68 @@ void  tray_control(void*) {
  }
 }
 
+//Make the right paddle a shift key, making everything into a descore position.
+/*
+void
+arm_control(void*) {
+ pros::Controller master(CONTROLLER_MASTER);
+ pros::Task arm_t(arm_pid);
+ static int HIGH_POLE = 2450, LOW_POLE = 1000, DOWN = 0;
+ int b_toggle = DOWN;
+ while (true) {
+   if (master.get_digital(DIGITAL_R1)) {
+     if (b_toggle == DOWN || b_toggle == LOW_POLE) {
+       b_toggle = HIGH_POLE;
+     } else {
+       b_toggle = DOWN;
+     }
+     set_arm_pid(b_toggle);
+     while (master.get_digital(DIGITAL_R1)) {
+       pros::delay(1);
+     }
+   }
+   if (master.get_digital(DIGITAL_R2)) {
+     if (b_toggle == DOWN || b_toggle == HIGH_POLE) {
+       b_toggle = LOW_POLE;
+     } else {
+       b_toggle = DOWN;
+     }
+     set_arm_pid(b_toggle);
+     while (master.get_digital(DIGITAL_R2)) {
+       pros::delay(1);
+     }
+   }
+   pros::delay(20);
+ }
+}
+*/
+
 void  arm_control(void*) {
  pros::Controller master(CONTROLLER_MASTER);
- //pros::Task arm_t(arm_pid);
+ pros::Task arm_t(arm_pid);
  bool was_pid;
  while (true) {
    if (master.get_digital(DIGITAL_B)) {
      was_pid = true;
-     int a_target =1300;
-     arm.move((a_target-arm.get_position())*0.5);
+     arm_t.resume();
+     set_arm_pid(1300);
    } else if (master.get_digital(DIGITAL_DOWN)) {
      was_pid = true;
-     int a_target =800;
-     arm.move((a_target-arm.get_position())*0.5);
+     arm_t.resume();
+     set_arm_pid(900);
    } else {
      if (master.get_digital(DIGITAL_R1)||master.get_digital(DIGITAL_R2)) {
        was_pid = false;
-       arm.move((master.get_digital(DIGITAL_R1)*80-master.get_digital(DIGITAL_R2)*40));// set arm to slow speed
+       set_arm((master.get_digital(DIGITAL_R1)-master.get_digital(DIGITAL_R2))*80);// set arm to slow speed
      } else {
        if (!was_pid) {
-         arm.move(0);
+         set_arm(0);
        }
      }
    }
 
    if (!was_pid) {
-     //arm_t.suspend();
+     arm_t.suspend();
    }
 
    pros::delay(20);
