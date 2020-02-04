@@ -98,7 +98,7 @@ static lv_res_t pidbtnm_action(lv_obj_t * btnm, const char * bmtxt) {
     kM = kM/10;
    break;
   }
-  sprintf(pidtext, "kP %3.2f kI %3.2f  kD %3.2f  kM %4.2f  ",
+  sprintf(pidtext, "kP %3.5f kI %3.5f  kD %3.5f  kM %4.5f  ",
               kP, kI, kD, kM
   );
   lv_label_set_text(pid_label, pidtext);
