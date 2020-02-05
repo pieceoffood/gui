@@ -120,7 +120,7 @@ void set_tray_pid(int input) {
 
 void tray_pid(void*) {
 	while (true) {
-		set_tray((t_target-tray.get_position())*0.5);
+		set_tray((t_target-tray.get_position())*0.2);
 		pros::delay(20);
 	}
 }
@@ -131,7 +131,7 @@ void set_arm_pid(int input) {
 }
 void arm_pid(void*) {
   while (true) {
-    set_arm((a_target-arm.get_position())*0.5);
+    set_arm((a_target-arm.get_position())*0.2);
     pros::delay(20);
   }
 }
@@ -199,17 +199,17 @@ arm_control(void*) {
 }
 */
 void  arm_control(void*) {
- pros::Controller master(CONTROLLER_MASTER);
+ //pros::Controller master(CONTROLLER_MASTER);
  //pros::Task arm_t(arm_pid);
- int a_target;
- bool was_pid;
+ int arm_target=0;
+ bool was_pid=false;
  while (true) {
    if (master.get_digital(DIGITAL_B)) {
      was_pid = true;
-     a_target =1300;
+     arm_target =1300;
    } else if (master.get_digital(DIGITAL_DOWN)) {
      was_pid = true;
-     a_target =800;
+     arm_target =800;
    } else {
      if (master.get_digital(DIGITAL_R1)||master.get_digital(DIGITAL_R2)) {
        was_pid = false;
@@ -220,10 +220,13 @@ void  arm_control(void*) {
        }
      }
    }
-
+   MiniPID pid=MiniPID(0.5,0,0.1);
+   pid.setOutputLimits(-100,100);
+   pid.setOutputRampRate(5);
+   double output=pid.getOutput(arm.get_position(), arm_target);
    if (was_pid) {
-     arm.move((a_target-arm.get_position())*0.5);
-	 //armPID(a_target);
+     //arm.move((arm_target-arm.get_position())*0.4);
+	   arm.move(output);
    }
 
    pros::delay(20);
