@@ -3,7 +3,11 @@
 #include "motor.hpp"
 #include "MiniPID.h"
 
-
+/**
+ * mover the chassis with PID control
+ *
+ * @param tartget target of the move Distance in inches assume 4 inch wheels
+ */
 void basemovePID(double target) {
   // move chassis in inches
   MiniPID pid=MiniPID(0.3,0,0.1); // need to tune those three parameters
@@ -33,6 +37,12 @@ void basemovePID(double target) {
   }
 }
 
+
+/**
+ * turn the chassis with PID control
+ * using gyro censor
+ * @param tartget turning angle in degrees
+ */
 void baseturnPID(double target) {
   // turn chassis in angles, clockwise is positive and anti-clockwise is negative
   MiniPID pid=MiniPID(0.3,0,0.1); // need to tune those three parameters
@@ -59,7 +69,12 @@ void baseturnPID(double target) {
   }
 }
 
-
+/**
+ * raise arm with PID control
+ * using V5 motor encoder
+ * starting position is zero tick
+ * @param tartget position in tick
+ */
 void armPID(double target) {
   // raise arm to target position
   // arm start at 0 tick
@@ -84,7 +99,15 @@ void armPID(double target) {
   }
 }
 
-void basemovement(double distance, int speed)
+
+/**
+ * move the chassis
+ * @param distance in inches
+ * @param speed +-200 for gree cartridge.
+                +-600 for blue cartridge.
+                +-100 for red cartridge.
+ */
+void basemove(double distance, int speed)
 {
   double ticks=(distance*900)/(4*M_PI);
   left_front.move_relative  (ticks, speed);
@@ -93,9 +116,18 @@ void basemovement(double distance, int speed)
   right_back.move_relative  (ticks, speed);
 }
 
-void baseturn(int right , int speed) // right=positive and left=negative
+/**
+ * turn the chassis
+ * emperically determine the 735 tick/90 degrees
+ * need to adjust base on your wheel and chasis size and
+ * @param turn in angles degrees, + for clockwise
+ * @param speed +-200 for gree cartridge.
+                +-600 for blue cartridge.
+                +-100 for red cartridge.
+ */
+void baseturn(int turn , int speed) // right=positive and left=negative
 {
-  double ticks=735*right;
+  double ticks=735/90*turn;
   left_front.move_relative  (ticks, speed);
   left_back.move_relative   (ticks, speed);
   right_front.move_relative (-ticks, speed);
@@ -104,44 +136,29 @@ void baseturn(int right , int speed) // right=positive and left=negative
 
 
 
-void set_tray(int input) {
-  tray.move(input);
-}
-
-void set_arm(int input) {
-  arm.move(input);
-}
-
-void set_rollers(int input) {
-  left_roller.move(input);
-  right_roller.move(input);
-}
-
-//PID
+//target position for tray
 int t_target;
+
+
+//set target position for tray
 void set_tray_pid(int input) {
   t_target = input;
 }
 
+
+// PID control P loop for tray
 void tray_pid(void*) {
 	while (true) {
-		set_tray((t_target-tray.get_position())*0.2);
+		tray.move((t_target-tray.get_position())*0.5);
 		pros::delay(20);
 	}
 }
 
-int a_target;
-void set_arm_pid(int input) {
-  a_target = input;
-}
-void arm_pid(void*) {
-  while (true) {
-    set_arm((a_target-arm.get_position())*0.2);
-    pros::delay(20);
-  }
-}
-
-
+/*
+tray PID Control
+DIGITAL_Y activate PID
+move tray to 1700 ticks with PID control
+*/
 void  tray_control(void*) {
  pros::Task tray_t(tray_pid);
  bool b_toggle = false;
@@ -168,13 +185,14 @@ void  tray_control(void*) {
 }
 
 
+/*
+DIGITAL_B PID to the high tower
+DIGITAL_DOWN PID to the lower tower
+DIGITAL_R1 arm up
+DIGITAL_R2 arm down
+you will need to adjust arm_target in the function
+*/
 void  arm_control(void*) {
- /*
- DIGITAL_B PID to the high tower
- DIGITAL_DOWN PID to the lower tower
- DIGITAL_R1 arm up
- DIGITAL_R2 arm down
- */
  int arm_target=0;
  bool was_pid=false;
  while (true) {

@@ -4,8 +4,9 @@
 
 void baseturnPID(double target);
 void basemovePID(double target);
+void armPID(double target);
 
-void basemovement(double distance, int speed);
+void basemove(double distance, int speed);
 void baseturn(int left, int speed);
 
 void  tray_control(void*) ;

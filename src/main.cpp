@@ -117,15 +117,19 @@ void opcontrol() {
   master.print(0, 0, "VEX");
   auto timeFlag=pros::millis();
   pros::Task tray_control_t(tray_control);
-  pros::Task t(arm_control);
+  pros::Task t_arm(arm_control);
 	while (true) {
+    // update control screen very 1 second
     if(pros::millis()-timeFlag>=1000)
              {
                     master.print(1, 0, "arm:%8.2f", arm.get_position());
                     timeFlag=pros::millis();
              }
 
+    // speed for left chassis by control ANALOG_LEFT_Y
 		int left = master.get_analog(ANALOG_LEFT_Y);
+
+    // speed for right chassis by control ANALOG_RIGHT_Y
 		int right = master.get_analog(ANALOG_RIGHT_Y);
 
     sprintf(mytext, "aarm potentiameter: %d, arm %8.2f \n"
