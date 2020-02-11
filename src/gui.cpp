@@ -98,6 +98,9 @@ static lv_res_t pidbtnm_action(lv_obj_t * btnm, const char * bmtxt) {
     kM = kM/10;
    break;
   }
+  kP = (kP >= 0 ? kP : 0);
+  kI = (kI >= 0 ? kI : 0);
+  kD = (kD >= 0 ? kD : 0);
   sprintf(pidtext, "kP %3.5f kI %3.5f  kD %3.5f  kM %4.5f  ",
               kP, kI, kD, kM
   );
