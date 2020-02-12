@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+// credit to https://github.com/timeconfusing/v5gui with modify
+// credit to https://github.com/kunwarsahni01/Vex-Autonomous-Selector
 // forward declaration of following two objects
 lv_obj_t * txt ;
 lv_obj_t * tabview ;
@@ -54,9 +56,9 @@ break;
 void gui_btnm(void) {
   // Create a button descriptor string array w/ no repeat "\224"
   //gui_btnm();
-  static const char * btnm_map[] = { "\2241", "\2242", "\2243", "\n",
-                                     "\2244", "\2245", "\2246", "" };
-
+  static const char * btnm_map[] = { "\2241 red big", "\2242 red small", "\2243 blue big", "\n",
+                                     "\2244 blue big", "\2245 Skill 1", "\2246 Skill 2", "" };
+  //The escape section prevents a press of the button being interpreted as a multipress of the button
   // Create a default button matrix* no repeat
   lv_obj_t *btnm = lv_btnm_create(tab1, NULL);
   lv_obj_set_size(btnm, lv_obj_get_width(tab1)-20,
@@ -129,6 +131,9 @@ void pid_btnm(void) {
 
 void lv_ex_tabview_1(void)
 {
+    // lvgl theme
+    lv_theme_t *th = lv_theme_alien_init(360, NULL); //Set a HUE value and keep font default RED
+    lv_theme_set_current(th);
     /*Create a Tab view object*/
 
     tabview = lv_tabview_create(lv_scr_act(), NULL);
