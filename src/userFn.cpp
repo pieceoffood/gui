@@ -9,22 +9,22 @@
 // task to print information on the screen to debug
 // must use void* in parameters
 void Tdisplay (void*) {
-  char mytext[100];
-  lv_obj_t * txt = lv_label_create(lv_scr_act(), NULL);
+  char displaytext[100];
   while (1) {
-    sprintf(mytext,
+    sprintf(displaytext,
             "arm potentiameter: %d, arm %8.2f \n"
             "tray: %8.2f, set zero: %d\n"
-            "leftfront:%8.2f velocity: %lf rightfront:%8.2f velocity: %lf\n"
+            "leftfront:%8.2f @: %5.1f rightfront:%8.2f @: %5.1f\n"
             "gyro:%8.2f\n",
             potentiameter.get_value(), arm.get_position(),
             tray.get_position(), limitswitch.get_value(),
             left_front.get_position(), left_front.get_actual_velocity(), right_front.get_position(),  right_front.get_actual_velocity(),
             gyro.get_value()
     );
-    lv_label_set_text(txt, mytext);
+    lv_label_set_text(txt, displaytext);
+    pros::delay(50);
   }
-  pros::delay(50);
+
 }
 
 /**
@@ -90,7 +90,7 @@ void baseturnPID(double target) {
     left_front.move(output);
     right_back.move(-output);
     right_front.move(-output);
-    
+
     // exit while loop is the motor stopped because of obstacle before reach target
     if (left_back.is_stopped()
         && left_front.is_stopped()

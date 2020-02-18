@@ -5,6 +5,7 @@
 #include "gui.h"
 #include "MiniPID.h"
 #include "userFn.hpp"
+#include <fstream>
 
 /*
 cd (change directory)
@@ -108,10 +109,14 @@ void autonomous() {
  * task, not resume it from where it left off.
  */
 void opcontrol() {
+
+  std::ofstream LogFile;
+  LogFile.open("/usd/logfile.txt");
+
   lv_tabview_set_tab_act(tabview, 2, LV_ANIM_NONE);
   char mytext[100];
 
-  /*Create a new label*/
+
   master.clear();
   master.print(0, 0, "VEX");
   auto timeFlag=pros::millis();
@@ -148,5 +153,9 @@ void opcontrol() {
       right_front.move (forwardback - turn );
       right_back.move  (forwardback - turn );
 		pros::delay(10);
+
+    LogFile<< " LF,"  << left_front.get_actual_velocity() << ", RF, "<< right_front.get_actual_velocity() << "\n" ;
+
 	}
+    LogFile.close();
 }
