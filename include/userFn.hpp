@@ -11,4 +11,6 @@ void baseturn(int left, int speed);
 
 void  tray_control(void*) ;
 void  arm_control(void*) ;
+
+void Tdisplay (void*);
 #endif

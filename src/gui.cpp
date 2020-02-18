@@ -8,6 +8,8 @@
 // credit to https://github.com/timeconfusing/v5gui with modify
 // credit to https://github.com/kunwarsahni01/Vex-Autonomous-Selector
 // forward declaration of following two objects
+
+// text to diplay motor and others
 lv_obj_t * txt ;
 lv_obj_t * tabview ;
 

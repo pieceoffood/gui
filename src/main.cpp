@@ -109,15 +109,14 @@ void autonomous() {
  */
 void opcontrol() {
   lv_tabview_set_tab_act(tabview, 2, LV_ANIM_NONE);
-  char mytext[100];
 
   /*Create a new label*/
-
   master.clear();
   master.print(0, 0, "VEX");
   auto timeFlag=pros::millis();
   pros::Task tray_control_t(tray_control);
   pros::Task t_arm(arm_control);
+  pros::Task Tdisplay(Tdisplay);
 	while (true) {
     // update control screen very 1 second
     if(pros::millis()-timeFlag>=1000)
@@ -131,19 +130,6 @@ void opcontrol() {
 
     // speed for right chassis by control ANALOG_RIGHT_Y
 		int right = master.get_analog(ANALOG_RIGHT_Y);
-
-    sprintf(mytext, "aarm potentiameter: %d, arm %8.2f \n"
-                "tray: %8.2f, set zero: %d\n"
-                "leftfront:%8.2f rightfront:%8.2f\n"
-                "gyro:%8.2f\n",
-       potentiameter.get_value(),
-       arm.get_position(),
-       tray.get_position(), limitswitch.get_value(),
-       left_front.get_position(), right_front.get_position(),
-       gyro.get_value()
-    );
-    lv_label_set_text(txt, mytext);
-
 		pros::delay(10);
 	}
 }

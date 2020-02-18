@@ -2,6 +2,30 @@
 #include "cmath"
 #include "motor.hpp"
 #include "MiniPID.h"
+#include "gui.h"
+
+
+
+// task to print information on the screen to debug
+// must use void* in parameters
+void Tdisplay (void*) {
+  char mytext[100];
+  lv_obj_t * txt = lv_label_create(lv_scr_act(), NULL);
+  while (1) {
+    sprintf(mytext,
+            "arm potentiameter: %d, arm %8.2f \n"
+            "tray: %8.2f, set zero: %d\n"
+            "leftfront:%8.2f velocity: %lf rightfront:%8.2f velocity: %lf\n"
+            "gyro:%8.2f\n",
+            potentiameter.get_value(), arm.get_position(),
+            tray.get_position(), limitswitch.get_value(),
+            left_front.get_position(), left_front.get_actual_velocity(), right_front.get_position(),  right_front.get_actual_velocity(),
+            gyro.get_value()
+    );
+    lv_label_set_text(txt, mytext);
+  }
+  pros::delay(50);
+}
 
 /**
  * mover the chassis with PID control
@@ -14,6 +38,7 @@ void basemovePID(double target) {
   pid.setOutputLimits(-80,80); // set output lower and upper limit
   pid.setOutputRampRate(5); //how fast the motor reach max speed
   double start=left_front.get_position(); // get current start positon in ticks
+  auto motorgear=left_front.get_gearing();
   // convert the target in inch to tick
   double targetTick = (target*900)/(4*M_PI)+start; // calculate the destination position in ticks
   while (fabs(left_front.get_position()-targetTick)>10) {
@@ -24,6 +49,13 @@ void basemovePID(double target) {
     left_front.move(output);
     right_back.move(output);
     right_front.move(output);
+    // exit while loop is the motor stopped because of obstacle before reach target
+    if (left_back.is_stopped()
+        && left_front.is_stopped()
+        && right_back.is_stopped()
+        && right_front.is_stopped() ) {
+      break;
+    }
 
     // print information on the screen to debug
     char mytext[100];
@@ -58,6 +90,15 @@ void baseturnPID(double target) {
     left_front.move(output);
     right_back.move(-output);
     right_front.move(-output);
+    
+    // exit while loop is the motor stopped because of obstacle before reach target
+    if (left_back.is_stopped()
+        && left_front.is_stopped()
+        && right_back.is_stopped()
+        && right_front.is_stopped() ) {
+      break;
+    }
+
     // print information on the screen to debug
     char mytext[100];
     lv_obj_t * txt = lv_label_create(lv_scr_act(), NULL);
