@@ -139,11 +139,14 @@ void opcontrol() {
                     timeFlag=pros::millis();
              }
 
-    // speed for left chassis by control ANALOG_LEFT_Y
-		int left = master.get_analog(ANALOG_LEFT_Y);
+    int forwardback = master.get_analog (ANALOG_LEFT_Y);
+    int turn        = master.get_analog (ANALOG_RIGHT_X);
 
-    // speed for right chassis by control ANALOG_RIGHT_Y
-		int right = master.get_analog(ANALOG_RIGHT_Y);
+    		// chasis
+    	left_front.move  (forwardback + turn );
+    	left_back.move   (forwardback + turn );
+      right_front.move (forwardback - turn );
+      right_back.move  (forwardback - turn );
 		pros::delay(10);
 	}
 }
