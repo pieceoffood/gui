@@ -12,6 +12,7 @@
 // text to diplay motor and others
 lv_obj_t * txt ;
 lv_obj_t * tabview ;
+lv_obj_t * label ;
 
 int auton_sel = 0;
 float kP=0.0;

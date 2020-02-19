@@ -110,8 +110,8 @@ void autonomous() {
  */
 void opcontrol() {
 
-  std::ofstream LogFile;
-  LogFile.open("/usd/logfile.txt");
+  //std::ofstream LogFile;
+  //LogFile.open("/usd/logfile.txt");
 
   lv_tabview_set_tab_act(tabview, 2, LV_ANIM_NONE);
   char mytext[100];
@@ -154,8 +154,8 @@ void opcontrol() {
       right_back.move  (forwardback - turn );
 		pros::delay(10);
 
-    LogFile<< " LF,"  << left_front.get_actual_velocity() << ", RF, "<< right_front.get_actual_velocity() << "\n" ;
+    //LogFile<< " LF,"  << left_front.get_actual_velocity() << ", RF, "<< right_front.get_actual_velocity() << "\n" ;
 
 	}
-    LogFile.close();
+    //LogFile.close();
 }

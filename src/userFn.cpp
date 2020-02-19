@@ -33,6 +33,7 @@ void Tdisplay (void*) {
  * @param tartget target of the move Distance in inches assume 4 inch wheels
  */
 void basemovePID(double target) {
+  char mytext[100];
   // move chassis in inches
   MiniPID pid=MiniPID(0.3,0,0.1); // need to tune those three parameters
   pid.setOutputLimits(-80,80); // set output lower and upper limit
@@ -50,21 +51,19 @@ void basemovePID(double target) {
     right_back.move(output);
     right_front.move(output);
     // exit while loop is the motor stopped because of obstacle before reach target
-    if (left_back.is_stopped()
+    /*if (left_back.is_stopped()
         && left_front.is_stopped()
         && right_back.is_stopped()
         && right_front.is_stopped() ) {
       break;
-    }
+    }*/
 
     // print information on the screen to debug
-    char mytext[100];
-    lv_obj_t * txt = lv_label_create(lv_scr_act(), NULL);
     printf("base start %8.2f, target %8.2f, base %8.2f\n", start, targetTick,left_front.get_position());
     sprintf(mytext, "base start %8.2f\n, target %8.2f\n, base %8.2f\n, output  base %8.2f\n",
             start, targetTick,left_front.get_position(), output
          );
-    lv_label_set_text(txt, mytext);
+    lv_label_set_text(label, mytext);
     pros::delay(10);
   }
 }
@@ -91,21 +90,12 @@ void baseturnPID(double target) {
     right_back.move(-output);
     right_front.move(-output);
 
-    // exit while loop is the motor stopped because of obstacle before reach target
-    if (left_back.is_stopped()
-        && left_front.is_stopped()
-        && right_back.is_stopped()
-        && right_front.is_stopped() ) {
-      break;
-    }
-
     // print information on the screen to debug
     char mytext[100];
-    lv_obj_t * txt = lv_label_create(lv_scr_act(), NULL);
     printf("base start %8.2f, target %8.2f, gyro %8.2f\n", start, turn,gyro.get_value());
-    sprintf(mytext, "\n\n\n\n\ngyro start %8.2f\n, target %8.2f\n, gyro %8.2f\n", start, turn,gyro.get_value()
+    sprintf(mytext, "gyro start %8.2f\n, target %8.2f\n, gyro %8.2f\n", start, turn,gyro.get_value()
          );
-    lv_label_set_text(txt, mytext);
+    lv_label_set_text(label, mytext);
     pros::delay(10);
   }
 }
