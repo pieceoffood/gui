@@ -21,7 +21,7 @@ void Tdisplay (void*) {
             left_front.get_position(), left_front.get_actual_velocity(), right_front.get_position(),  right_front.get_actual_velocity(),
             gyro.get_value()
     );
-    lv_label_set_text(label, displaytext);
+    lv_label_set_text(debuglabel, displaytext);
     pros::delay(100);
   }
 
@@ -35,7 +35,7 @@ void Tdisplay (void*) {
 void basemovePID(double target) {
   char mytext[100];
   // move chassis in inches
-  MiniPID pid=MiniPID(0.3,0,0.1); // need to tune those three parameters
+  MiniPID pid=MiniPID(0.1,0,0.1); // need to tune those three parameters
   pid.setOutputLimits(-80,80); // set output lower and upper limit
   pid.setOutputRampRate(5); //how fast the motor reach max speed
   double start=left_front.get_position(); // get current start positon in ticks
@@ -52,11 +52,11 @@ void basemovePID(double target) {
     right_front.move(output);
     // print information on the screen to debug
     printf("base start %8.2f, target %8.2f, base %8.2f\n", start, targetTick,left_front.get_position());
-    sprintf(mytext, "base start %8.2f\n, target %8.2f\n, base %8.2f\n, output  base %8.2f\n",
+    sprintf(mytext, "base start %8.2f, target %8.2f\n, base %8.2f, output  base %8.2f\n",
             start, targetTick, left_front.get_position(), output
          );
-    lv_label_set_text(label, mytext);
-    pros::delay(10);
+    lv_label_set_text(debugpid, mytext);
+    pros::delay(20);
     // exit while loop is the motor stopped because of obstacle before reach target
     if ( // wait until the motor stop/reach target
             left_front.get_actual_velocity()==0
@@ -65,6 +65,10 @@ void basemovePID(double target) {
             && right_back.get_actual_velocity()==0
            )   break;
   }
+  left_back.move(0);
+  left_front.move(0);
+  right_back.move(0);
+  right_front.move(0);
 }
 
 
@@ -75,7 +79,7 @@ void basemovePID(double target) {
  */
 void baseturnPID(double target) {
   // turn chassis in angles, clockwise is positive and anti-clockwise is negative
-  MiniPID pid=MiniPID(0.3,0,0.1); // need to tune those three parameters
+  MiniPID pid=MiniPID(0.25,0,0.1); // need to tune those three parameters
   pid.setOutputLimits(-50,50); // set output lower and upper limit
   pid.setOutputRampRate(5); //how fast the motor reach max speed
   double start=gyro.get_value(); // get current/start angle from gyro
@@ -92,10 +96,10 @@ void baseturnPID(double target) {
     // print information on the screen to debug
     char mytext[100];
     printf("base start %8.2f, target %8.2f, gyro %8.2f\n", start, turn,gyro.get_value());
-    sprintf(mytext, "gyro start %8.2f\n, target %8.2f\n, gyro %8.2f\n", start, turn,gyro.get_value()
+    sprintf(mytext, "gyro start %8.2f, target %8.2f\n, gyro %8.2f\n", start, turn ,gyro.get_value()
          );
-    lv_label_set_text(label, mytext);
-    pros::delay(10);
+    lv_label_set_text(debugpid, mytext);
+    pros::delay(20);
     // exit while loop is the motor stopped because of obstacle before reach target
     if ( // wait until the motor stop/reach target
             left_front.get_actual_velocity()==0
@@ -116,6 +120,8 @@ void armPID(double target) {
   // raise arm to target position
   // arm start at 0 tick
   // target measured at ticks
+
+  char mytext[100];
   MiniPID pid=MiniPID(0.3,0,0.1); // need to tune those three parameters
   pid.setOutputLimits(-80,80); // set output lower and upper limit
   pid.setOutputRampRate(5);
@@ -125,13 +131,12 @@ void armPID(double target) {
         target);
     arm.move(output);
     // print information on the screen to debug
-    char mytext[100];
-    lv_obj_t * txt = lv_label_create(lv_scr_act(), NULL);
+
     printf("arm start %8.2f, target %8.2f, base %8.2f\n", start, target , arm.get_position());
     sprintf(mytext, "base start %8.2f\n, target %8.2f\n, base %8.2f\n, output  base %8.2f\n",
             start, target, arm.get_position(), output
          );
-    lv_label_set_text(txt, mytext);
+    lv_label_set_text(debuglabel, mytext);
     pros::delay(10);
   }
 }

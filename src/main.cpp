@@ -95,6 +95,8 @@ void autonomous() {
       case 2:
         // auton2();
         basemovePID(24);
+        basemovePID(-12);
+        baseturnPID(-90);
 
       break;
       case 3:
@@ -152,14 +154,14 @@ void opcontrol() {
     sprintf(mytext,
             "arm potentiameter: %d, arm %8.2f \n"
             "tray: %8.2f, set zero: %d\n"
-            "leftfront:%8.2f velocity: %lf rightfront:%8.2f velocity: %lf\n"
+            "leftfront:%8.2f velocity: %5.1f rightfront:%8.2f velocity: %5.1f\n"
             "gyro:%8.2f\n",
             potentiameter.get_value(), arm.get_position(),
             tray.get_position(), limitswitch.get_value(),
             left_front.get_position(), left_front.get_actual_velocity(), right_front.get_position(),  right_front.get_actual_velocity(),
             gyro.get_value()
     );
-    lv_label_set_text(txt, mytext);
+    lv_label_set_text(debugtxt, mytext);
 
     // update control screen very 1 second
     if(pros::millis()-timeFlag>=1000)

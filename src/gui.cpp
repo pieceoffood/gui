@@ -7,12 +7,13 @@
 
 // credit to https://github.com/timeconfusing/v5gui with modify
 // credit to https://github.com/kunwarsahni01/Vex-Autonomous-Selector
-// forward declaration of following two objects
 
+// forward declaration of following two objects
 // text to diplay motor and others
-lv_obj_t * txt ;
+lv_obj_t * debugtxt ;
 lv_obj_t * tabview ;
-lv_obj_t * label ;
+lv_obj_t * debuglabel ;
+lv_obj_t * debugpid;
 
 int auton_sel = 0;
 float kP=0.0;
@@ -161,19 +162,21 @@ void lv_ex_tabview_1(void)
     lv_label_set_text(g_sb_label, "auto select");
 
 
-    label = lv_label_create(tab2, NULL);
-    lv_label_set_text(label, "Second tab");
+    debuglabel = lv_label_create(tab2, NULL);
+    lv_label_set_text(debuglabel, "auto debug");
+    debugpid = lv_label_create(tab2, NULL);
+    lv_obj_align(debugpid, debuglabel, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 80);
 
     //label = lv_label_create(tab3, NULL);
     //lv_label_set_text(label, NULL);
-    txt = lv_label_create(tab3, NULL);
-    //lv_obj_set_style(txt, &style_txt);                    /*Set the created style*/
-    lv_label_set_long_mode(txt, LV_LABEL_LONG_BREAK);     /*Break the long lines*/
-    lv_label_set_recolor(txt, true);                      /*Enable re-coloring by commands in the text*/
-    lv_label_set_align(txt, LV_LABEL_ALIGN_LEFT);       /*Center aligned lines*/
-    lv_label_set_text(txt, NULL);
-    lv_obj_set_width(txt, 500);                           /*Set a width*/
-    lv_obj_align(txt, NULL, LV_ALIGN_IN_TOP_LEFT, 10, 20);      /*Align to center*/
+    debugtxt = lv_label_create(tab3, NULL);
+    //lv_obj_set_style(debugtxt, &style_txt);                    /*Set the created style*/
+    lv_label_set_long_mode(debugtxt, LV_LABEL_LONG_BREAK);     /*Break the long lines*/
+    lv_label_set_recolor(debugtxt, true);                      /*Enable re-coloring by commands in the text*/
+    lv_label_set_align(debugtxt, LV_LABEL_ALIGN_LEFT);       /*Center aligned lines*/
+    lv_label_set_text(debugtxt, NULL);
+    lv_obj_set_width(debugtxt, 500);                           /*Set a width*/
+    lv_obj_align(debugtxt, NULL, LV_ALIGN_IN_TOP_LEFT, 10, 20);      /*Align to center*/
 
 
     pid_label = lv_label_create(tab4, NULL);
