@@ -65,10 +65,10 @@ void basemovePID(double target) {
             && right_back.get_actual_velocity()==0
            )   break;
   }
-  left_back.move(0);
-  left_front.move(0);
-  right_back.move(0);
-  right_front.move(0);
+  // left_back.move(0);
+  // left_front.move(0);
+  // right_back.move(0);
+  // right_front.move(0);
 }
 
 
