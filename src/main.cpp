@@ -63,14 +63,38 @@ void competition_initialize() {}
  */
 void autonomous() {
   lv_tabview_set_tab_act(tabview, 1, LV_ANIM_NONE);
+  pros::Task T_display(Tdisplay);
 
     switch (auton_sel) {
       case 1:
         // auton1();
-
+        basemove(24,50);
+        while ( // wait until the motor stop/reach target
+                left_front.get_actual_velocity()!=0
+                || right_front.get_actual_velocity()!=0
+                || left_back.get_actual_velocity()!=0
+                || right_back.get_actual_velocity()!=0
+               ) {
+          pros::delay(20);
+        }
+        basemove(-12,50);
+        while ( // wait until the motor stop/reach target
+                left_front.get_actual_velocity()!=0
+                || right_front.get_actual_velocity()!=0
+                || left_back.get_actual_velocity()!=0
+                || right_back.get_actual_velocity()!=0
+               ) {
+          pros::delay(20);
+        }
+        pros::delay(50);
+        left_front.move(0);
+        left_back.move(0);
+        right_front.move(0);
+        right_back.move(0);
       break;
       case 2:
         // auton2();
+        basemovePID(24);
 
       break;
       case 3:

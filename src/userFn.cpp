@@ -21,8 +21,8 @@ void Tdisplay (void*) {
             left_front.get_position(), left_front.get_actual_velocity(), right_front.get_position(),  right_front.get_actual_velocity(),
             gyro.get_value()
     );
-    lv_label_set_text(txt, displaytext);
-    pros::delay(50);
+    lv_label_set_text(label, displaytext);
+    pros::delay(100);
   }
 
 }
@@ -50,21 +50,20 @@ void basemovePID(double target) {
     left_front.move(output);
     right_back.move(output);
     right_front.move(output);
-    // exit while loop is the motor stopped because of obstacle before reach target
-    /*if (left_back.is_stopped()
-        && left_front.is_stopped()
-        && right_back.is_stopped()
-        && right_front.is_stopped() ) {
-      break;
-    }*/
-
     // print information on the screen to debug
     printf("base start %8.2f, target %8.2f, base %8.2f\n", start, targetTick,left_front.get_position());
     sprintf(mytext, "base start %8.2f\n, target %8.2f\n, base %8.2f\n, output  base %8.2f\n",
-            start, targetTick,left_front.get_position(), output
+            start, targetTick, left_front.get_position(), output
          );
     lv_label_set_text(label, mytext);
     pros::delay(10);
+    // exit while loop is the motor stopped because of obstacle before reach target
+    if ( // wait until the motor stop/reach target
+            left_front.get_actual_velocity()==0
+            && right_front.get_actual_velocity()==0
+            && left_back.get_actual_velocity()==0
+            && right_back.get_actual_velocity()==0
+           )   break;
   }
 }
 
@@ -97,6 +96,13 @@ void baseturnPID(double target) {
          );
     lv_label_set_text(label, mytext);
     pros::delay(10);
+    // exit while loop is the motor stopped because of obstacle before reach target
+    if ( // wait until the motor stop/reach target
+            left_front.get_actual_velocity()==0
+            && right_front.get_actual_velocity()==0
+            && left_back.get_actual_velocity()==0
+            && right_back.get_actual_velocity()==0
+           )   break;
   }
 }
 
@@ -145,6 +151,7 @@ void basemove(double distance, int speed)
   left_back.move_relative   (ticks, speed);
   right_front.move_relative (ticks, speed);
   right_back.move_relative  (ticks, speed);
+  pros::delay(50);
 }
 
 /**
@@ -163,6 +170,7 @@ void baseturn(int turn , int speed) // right=positive and left=negative
   left_back.move_relative   (ticks, speed);
   right_front.move_relative (-ticks, speed);
   right_back.move_relative  (-ticks, speed);
+  pros::delay(50);
 }
 
 
