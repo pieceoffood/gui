@@ -136,13 +136,10 @@ void autonomous() {
  */
 void opcontrol() {
 
-  //std::ofstream LogFile;
-  //LogFile.open("/usd/logfile.txt");
 
   FILE * sdfile =fopen("/usd/rerun.txt", "w");
-  fprintf(sdfile, "");
+  fprintf(sdfile, "// generate code by driving \n");
   fclose(sdfile);
-  fopen("/usd/rerun.txt", "a");
   int timeOld = 0;
   int timeNew = 0;
   int deltaTime = 0;
@@ -194,7 +191,7 @@ void opcontrol() {
     right_back.move  (forwardback - turn );
 		pros::delay(10);
 
-    //LogFile<< " left_front.move_velocity("  << flSpeed << ");\n" ;
+
     flSpeed = left_front.get_actual_velocity();
 		blSpeed = left_back.get_actual_velocity();
 		frSpeed = right_front.get_actual_velocity();
@@ -202,21 +199,24 @@ void opcontrol() {
 		armSpeed = arm.get_actual_velocity();
 		left_rollerSpeed = left_roller.get_target_velocity();
 
-		FILE* usd_file_write = fopen("/usd/rerun.txt", "a");
-		fprintf(usd_file_write, "left_front.move_velocity(%i); \n", flSpeed);
-		fprintf(usd_file_write, "left_back.move_velocity(%i); \n", blSpeed);
-		fprintf(usd_file_write, "right_front.move_velocity(%i); \n", frSpeed);
-		fprintf(usd_file_write, "right_back.move_velocity(%i); \n", brSpeed);
-		fprintf(usd_file_write, "arm.move_velocity(%i); \n", armSpeed);
-		fprintf(usd_file_write, "left_roller.move_velocity(%i); \n", left_rollerSpeed);
-    fprintf(usd_file_write, "right_roller.move_velocity(%i); \n", left_rollerSpeed);
+
+    sdfile =fopen("/usd/rerun.txt", "a");
+    fprintf(sdfile, "left_front.move_velocity(%i); \n", flSpeed);
+		fprintf(sdfile, "left_back.move_velocity(%i); \n", blSpeed);
+		fprintf(sdfile, "right_front.move_velocity(%i); \n", frSpeed);
+		fprintf(sdfile, "right_back.move_velocity(%i); \n", brSpeed);
+		fprintf(sdfile, "arm.move_velocity(%i); \n", armSpeed);
+		fprintf(sdfile, "left_roller.move_velocity(%i); \n", left_rollerSpeed);
+    fprintf(sdfile, "right_roller.move_velocity(%i); \n", left_rollerSpeed);
     timeNew=pros::millis();
     deltaTime=timeNew-timeOld;
     timeOld=pros::millis();
     fprintf(sdfile, "pros:delay(%d);\n", deltaTime);
-
+    fclose(sdfile);
+    //std::ofstream LogFile;
+    //LogFile.open("/usd/logfile.txt");
+    //LogFile<< " left_front.move_velocity("  << flSpeed << ");\n" ;
+    //LogFile.close();
 
 	}
-  fclose(sdfile);
-  //LogFile.close();
 }
