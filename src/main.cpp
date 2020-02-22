@@ -139,6 +139,20 @@ void opcontrol() {
   //std::ofstream LogFile;
   //LogFile.open("/usd/logfile.txt");
 
+  FILE * sdfile =fopen("/usd/rerun.txt", "w");
+  fprintf(sdfile, "");
+  fclose(sdfile);
+  fopen("/usd/rerun.txt", "a");
+  int timeOld = 0;
+  int timeNew = 0;
+  int deltaTime = 0;
+  int flSpeed = 0;
+  int blSpeed = 0;
+  int frSpeed = 0;
+  int brSpeed = 0;
+  int armSpeed = 0;
+  int left_rollerSpeed = 0;
+
   lv_tabview_set_tab_act(tabview, 2, LV_ANIM_NONE);
   char mytext[100];
 
@@ -174,14 +188,35 @@ void opcontrol() {
     int turn        = master.get_analog (ANALOG_RIGHT_X);
 
     		// chasis
-    	left_front.move  (forwardback + turn );
-    	left_back.move   (forwardback + turn );
-      right_front.move (forwardback - turn );
-      right_back.move  (forwardback - turn );
+    left_front.move  (forwardback + turn );
+    left_back.move   (forwardback + turn );
+    right_front.move (forwardback - turn );
+    right_back.move  (forwardback - turn );
 		pros::delay(10);
 
-    //LogFile<< " LF,"  << left_front.get_actual_velocity() << ", RF, "<< right_front.get_actual_velocity() << "\n" ;
+    //LogFile<< " left_front.move_velocity("  << flSpeed << ");\n" ;
+    flSpeed = left_front.get_actual_velocity();
+		blSpeed = left_back.get_actual_velocity();
+		frSpeed = right_front.get_actual_velocity();
+		brSpeed = right_back.get_actual_velocity();
+		armSpeed = arm.get_actual_velocity();
+		left_rollerSpeed = left_roller.get_target_velocity();
+
+		FILE* usd_file_write = fopen("/usd/rerun.txt", "a");
+		fprintf(usd_file_write, "left_front.move_velocity(%i); \n", flSpeed);
+		fprintf(usd_file_write, "left_back.move_velocity(%i); \n", blSpeed);
+		fprintf(usd_file_write, "right_front.move_velocity(%i); \n", frSpeed);
+		fprintf(usd_file_write, "right_back.move_velocity(%i); \n", brSpeed);
+		fprintf(usd_file_write, "arm.move_velocity(%i); \n", armSpeed);
+		fprintf(usd_file_write, "left_roller.move_velocity(%i); \n", left_rollerSpeed);
+    fprintf(usd_file_write, "right_roller.move_velocity(%i); \n", left_rollerSpeed);
+    timeNew=pros::millis();
+    deltaTime=timeNew-timeOld;
+    timeOld=pros::millis();
+    fprintf(sdfile, "pros:delay(%d);\n", deltaTime);
+
 
 	}
-    //LogFile.close();
+  fclose(sdfile);
+  //LogFile.close();
 }
