@@ -8,10 +8,12 @@
 #include <fstream>
 
 /*
+following are prosv5 commands
 cd (change directory)
 cd .. (go up one level)
 prosv5 make clean (clean everything)
 prosv5 build-compile-commands (compile the code)
+prosv5 make (compile the code)
 prosv5 upload --slot 5 (upload the program to V5 slot 5)
 prosv5 v5 rm-all
 prosv5 v5 rm-file slot_4.bin --erase-all
@@ -26,7 +28,6 @@ prosv5 v5 rm-file slot_4.bin --erase-all
 void initialize() {
   pros::delay(10);
 	lv_ex_tabview_1();
-
 
 }
 
@@ -138,7 +139,10 @@ void opcontrol() {
 
 
   FILE * sdfile =fopen("/usd/rerun.txt", "w");
-  fprintf(sdfile, "// generate code by driving \n");
+  if (sdfile!=NULL) {
+    fprintf(sdfile, "// generate code by driving \n");
+
+  }
   fclose(sdfile);
   int timeOld = 0;
   int timeNew = 0;
@@ -201,17 +205,19 @@ void opcontrol() {
 
 
     sdfile =fopen("/usd/rerun.txt", "a");
-    fprintf(sdfile, "left_front.move_velocity(%i); \n", flSpeed);
-		fprintf(sdfile, "left_back.move_velocity(%i); \n", blSpeed);
-		fprintf(sdfile, "right_front.move_velocity(%i); \n", frSpeed);
-		fprintf(sdfile, "right_back.move_velocity(%i); \n", brSpeed);
-		fprintf(sdfile, "arm.move_velocity(%i); \n", armSpeed);
-		fprintf(sdfile, "left_roller.move_velocity(%i); \n", left_rollerSpeed);
-    fprintf(sdfile, "right_roller.move_velocity(%i); \n", left_rollerSpeed);
-    timeNew=pros::millis();
-    deltaTime=timeNew-timeOld;
-    timeOld=pros::millis();
-    fprintf(sdfile, "pros:delay(%d);\n", deltaTime);
+    if (sdfile!=NULL) {
+      fprintf(sdfile, "left_front.move_velocity(%i); \n", flSpeed);
+  		fprintf(sdfile, "left_back.move_velocity(%i); \n", blSpeed);
+  		fprintf(sdfile, "right_front.move_velocity(%i); \n", frSpeed);
+  		fprintf(sdfile, "right_back.move_velocity(%i); \n", brSpeed);
+  		fprintf(sdfile, "arm.move_velocity(%i); \n", armSpeed);
+  		fprintf(sdfile, "left_roller.move_velocity(%i); \n", left_rollerSpeed);
+      fprintf(sdfile, "right_roller.move_velocity(%i); \n", left_rollerSpeed);
+      timeNew=pros::millis();
+      deltaTime=timeNew-timeOld;
+      timeOld=pros::millis();
+      fprintf(sdfile, "pros:delay(%d);\n", deltaTime);
+    }
     fclose(sdfile);
     //std::ofstream LogFile;
     //LogFile.open("/usd/logfile.txt");
