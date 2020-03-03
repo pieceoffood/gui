@@ -154,6 +154,16 @@ void opcontrol() {
   int armSpeed = 0;
   int left_rollerSpeed = 0;
 
+  /** register to allow user to control motor
+  * it allow user to control the motor with buttons
+  * when buttons pressed, it is reset to true
+  * when buttons released, it is reset to false,
+  * only when it is true, the moter be asked to stop
+  * brain will not keep telling motor to stop
+  * thus allow other task/macro to control the same motor without conflict
+  */
+  bool RollerUserAllow = true;
+
   lv_tabview_set_tab_act(tabview, 2, LV_ANIM_NONE);
   char mytext[100];
 
@@ -188,7 +198,7 @@ void opcontrol() {
     int forwardback = master.get_analog (ANALOG_LEFT_Y);
     int turn        = master.get_analog (ANALOG_RIGHT_X);
 
-    		// chasis
+    // chasis arcade
     left_front.move  (forwardback + turn );
     left_back.move   (forwardback + turn );
     right_front.move (forwardback - turn );
@@ -202,6 +212,21 @@ void opcontrol() {
 		brSpeed = right_back.get_actual_velocity();
 		armSpeed = arm.get_actual_velocity();
 		left_rollerSpeed = left_roller.get_target_velocity();
+
+    // roller intake
+    if (master.get_digital(DIGITAL_L1)) {
+      RollerUserAllow=true; // allow stop the moter when release button
+			left_roller.move_velocity(200);
+      right_roller.move_velocity(200);
+		} else if (master.get_digital(DIGITAL_L2)) {
+      RollerUserAllow=true; // allow stop the moter when release button
+      left_roller.move_velocity(-50);
+      right_roller.move_velocity(-50);
+		} else if (RollerUserAllow==true)  {
+      RollerUserAllow=false; // butten released and not need to keep telling the motor to stop
+      left_roller.move_velocity(0);
+      right_roller.move_velocity(0);
+		}
 
 
     sdfile =fopen("/usd/rerun.txt", "a");

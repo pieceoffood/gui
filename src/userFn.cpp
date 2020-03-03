@@ -24,7 +24,6 @@ void Tdisplay (void*) {
     lv_label_set_text(debuglabel, displaytext);
     pros::delay(100);
   }
-
 }
 
 /**
@@ -238,7 +237,7 @@ you will need to adjust arm_target in the function
 */
 void  arm_control(void*) {
  int arm_target=0;
- bool was_pid=false;
+ bool was_pid=false; // registe for PID
  while (true) {
    if (master.get_digital(DIGITAL_B)) {
      was_pid = true;
