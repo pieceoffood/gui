@@ -138,19 +138,19 @@ void autonomous() {
 void opcontrol() {
 
 
+  //prepare to write to SD card
   FILE * sdfile =fopen("/usd/rerun.txt", "w");
   if (sdfile!=NULL) {
     fprintf(sdfile, "// generate code by driving \n");
-
   }
   fclose(sdfile);
   int timeOld = 0;
   int timeNew = 0;
   int deltaTime = 0;
-  int flSpeed = 0;
-  int blSpeed = 0;
-  int frSpeed = 0;
-  int brSpeed = 0;
+  int lfSpeed = 0;
+  int lbSpeed = 0;
+  int rfSpeed = 0;
+  int rbSpeed = 0;
   int armSpeed = 0;
   int left_rollerSpeed = 0;
 
@@ -176,6 +176,7 @@ void opcontrol() {
   //pros::Task T_display(Tdisplay);
 	while (true) {
 
+    //print info to screen to debug
     sprintf(mytext,
             "arm potentiameter: %d, arm %8.2f \n"
             "tray: %8.2f, set zero: %d\n"
@@ -188,13 +189,14 @@ void opcontrol() {
     );
     lv_label_set_text(debugtxt, mytext);
 
-    // update control screen very 1 second
-    if(pros::millis()-timeFlag>=1000)
-             {
-                    master.print(1, 0, "arm:%8.2f", arm.get_position());
-                    timeFlag=pros::millis();
-             }
 
+    // update control screen very 1 second
+    if(pros::millis()-timeFlag>=1000){
+      master.print(1, 0, "arm:%8.2f", arm.get_position());
+      timeFlag=pros::millis();
+    }
+
+    //arcade drive
     int forwardback = master.get_analog (ANALOG_LEFT_Y);
     int turn        = master.get_analog (ANALOG_RIGHT_X);
 
@@ -203,15 +205,6 @@ void opcontrol() {
     left_back.move   (forwardback + turn );
     right_front.move (forwardback - turn );
     right_back.move  (forwardback - turn );
-		pros::delay(10);
-
-
-    flSpeed = left_front.get_actual_velocity();
-		blSpeed = left_back.get_actual_velocity();
-		frSpeed = right_front.get_actual_velocity();
-		brSpeed = right_back.get_actual_velocity();
-		armSpeed = arm.get_actual_velocity();
-		left_rollerSpeed = left_roller.get_target_velocity();
 
     // roller intake
     if (master.get_digital(DIGITAL_L1)) {
@@ -229,12 +222,19 @@ void opcontrol() {
 		}
 
 
+    // write to SD card
     sdfile =fopen("/usd/rerun.txt", "a");
     if (sdfile!=NULL) {
-      fprintf(sdfile, "left_front.move_velocity(%i); \n", flSpeed);
-  		fprintf(sdfile, "left_back.move_velocity(%i); \n", blSpeed);
-  		fprintf(sdfile, "right_front.move_velocity(%i); \n", frSpeed);
-  		fprintf(sdfile, "right_back.move_velocity(%i); \n", brSpeed);
+      lfSpeed = left_front.get_actual_velocity();
+  		lbSpeed = left_back.get_actual_velocity();
+  		rfSpeed = right_front.get_actual_velocity();
+  		rbSpeed = right_back.get_actual_velocity();
+  		armSpeed = arm.get_actual_velocity();
+  		left_rollerSpeed = left_roller.get_target_velocity();
+      fprintf(sdfile, "left_front.move_velocity(%i); \n", lfSpeed);
+  		fprintf(sdfile, "left_back.move_velocity(%i); \n", lbSpeed);
+  		fprintf(sdfile, "right_front.move_velocity(%i); \n", rfSpeed);
+  		fprintf(sdfile, "right_back.move_velocity(%i); \n", rbSpeed);
   		fprintf(sdfile, "arm.move_velocity(%i); \n", armSpeed);
   		fprintf(sdfile, "left_roller.move_velocity(%i); \n", left_rollerSpeed);
       fprintf(sdfile, "right_roller.move_velocity(%i); \n", left_rollerSpeed);
@@ -244,10 +244,11 @@ void opcontrol() {
       fprintf(sdfile, "pros:delay(%d);\n", deltaTime);
     }
     fclose(sdfile);
+
     //std::ofstream LogFile;
     //LogFile.open("/usd/logfile.txt");
-    //LogFile<< " left_front.move_velocity("  << flSpeed << ");\n" ;
+    //LogFile<< " left_front.move_velocity("  << lfSpeed << ");\n" ;
     //LogFile.close();
-
+    pros::delay(10);
 	}
 }
