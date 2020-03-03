@@ -6,7 +6,7 @@
 
 
 
-// task to print information on the screen to debug
+// task to print motors and sensors information on the screen to debug
 // must use void* in parameters
 void Tdisplay (void*) {
   char displaytext[100];
@@ -40,7 +40,7 @@ void basemovePID(double target) {
   double start=left_front.get_position(); // get current start positon in ticks
   auto motorgear=left_front.get_gearing();
   // convert the target in inch to tick
-  double targetTick = (target*900)/(4*M_PI)+start; // calculate the destination position in ticks
+  double targetTick = (target*360)/(4*M_PI)+start; // calculate the destination position in ticks
   while (fabs(left_front.get_position()-targetTick)>10) {
     double output=pid.getOutput(left_front.get_position(),
         targetTick);
@@ -56,8 +56,8 @@ void basemovePID(double target) {
          );
     lv_label_set_text(debugpid, mytext);
     pros::delay(20);
-    // exit while loop is the motor stopped because of obstacle before reach target
-    if ( // wait until the motor stop/reach target
+    // exit while loop when the motors stopped because of obstacle before reaching target
+    if ( // wait until the motors stop/reach target
             left_front.get_actual_velocity()==0
             && right_front.get_actual_velocity()==0
             && left_back.get_actual_velocity()==0
@@ -99,8 +99,8 @@ void baseturnPID(double target) {
          );
     lv_label_set_text(debugpid, mytext);
     pros::delay(20);
-    // exit while loop is the motor stopped because of obstacle before reach target
-    if ( // wait until the motor stop/reach target
+    // exit while loop when the motors stopped because of obstacle before reaching target
+    if ( // wait until the motors stop/reach target
             left_front.get_actual_velocity()==0
             && right_front.get_actual_velocity()==0
             && left_back.get_actual_velocity()==0
@@ -150,7 +150,7 @@ void armPID(double target) {
  */
 void basemove(double distance, int speed)
 {
-  double ticks=(distance*900)/(4*M_PI);
+  double ticks=(distance*360)/(4*M_PI);
   left_front.move_relative  (ticks, speed);
   left_back.move_relative   (ticks, speed);
   right_front.move_relative (ticks, speed);
@@ -160,7 +160,8 @@ void basemove(double distance, int speed)
 
 /**
  * turn the chassis
- * emperically determine the 735 tick/90 degrees
+ * it depend on the motor gearset and chassis size
+ * emperically determine the 735 tick/90 degrees it
  * need to adjust base on your wheel and chasis size and
  * @param turn in angles degrees, + for clockwise
  * @param speed +-200 for gree cartridge.
@@ -169,7 +170,7 @@ void basemove(double distance, int speed)
  */
 void baseturn(int turn , int speed) // right=positive and left=negative
 {
-  double ticks=735/90*turn;
+  double ticks=300/90*turn;
   left_front.move_relative  (ticks, speed);
   left_back.move_relative   (ticks, speed);
   right_front.move_relative (-ticks, speed);

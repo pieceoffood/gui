@@ -19,4 +19,6 @@ extern pros::ADIDigitalIn limitswitch ;
 extern pros::ADIAnalogIn potentiameter;
 extern pros::ADIGyro gyro;
 extern pros::ADIDigitalIn limitswitchball;
+extern pros::ADIEncoder lencoder; // left encoder 
+extern pros::ADIEncoder rencoder; // right encoder
 #endif
