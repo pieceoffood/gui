@@ -12,47 +12,80 @@ void Tdisplay (void*) {
   char displaytext[100];
   while (1) {
     sprintf(displaytext,
-            "arm potentiameter: %d, arm %8.2f \n"
-            "tray: %8.2f, set zero: %d\n"
-            "leftfront:%8.2f @: %5.1f rightfront:%8.2f @: %5.1f\n"
-            "gyro:%8.2f\n",
-            potentiameter.get_value(), arm.get_position(),
-            tray.get_position(), limitswitch.get_value(),
-            left_front.get_position(), left_front.get_actual_velocity(), right_front.get_position(),  right_front.get_actual_velocity(),
-            gyro.get_value()
+            "%-10.10s, %8d, %-5.5s, %8.2f \n"
+            "%-10.10s, %8.2f, %-5.5s, %8d\n"
+            "%-10.10s, %8.2f %-5.5s, %5.1f"
+            "%-10.10s, %8.2f %-5.5s, %5.1f\n"
+            "%-10.10s, %8.2f \n",
+            "arm pot:", potentiameter.get_value(), "arm", arm.get_position(),
+            "tray: ", tray.get_position(), "reset", limitswitch.get_value(),
+            "leftfront", left_front.get_position(), "velocity", left_front.get_actual_velocity(),
+            "rightfront", right_front.get_position(),  "velocity", right_front.get_actual_velocity(),
+            "gyro", gyro.get_value()
     );
     lv_label_set_text(debuglabel, displaytext);
     pros::delay(100);
   }
 }
 
+// curve function for the joystick input
+//graph of red and blue lines from 5225A here
+//https://www.desmos.com/calculator/sdcgzah5ya
+int curveJoystick(int input, double t = 20, bool red = true ){
+  int val = 0;
+  int scale = 127;
+  if(red){
+    val = (std::exp(-t/10)+std::exp((std::abs(input)-scale)/10)*(1-std::exp(-t/10))) * input;
+  }else{
+    //blue
+    val = std::exp(((std::abs(input)-scale)*t)/1000) * input;
+  }
+  return val;
+}
+int curveJoystick(int input){
+  int val = 0;
+  int scale = 127;
+  double t = 20;
+  bool red = true;
+  if(red){
+    val = (std::exp(-t/10)+std::exp((std::abs(input)-scale)/10)*(1-std::exp(-t/10))) * input;
+  }else{
+    //blue
+    val = std::exp(((std::abs(input)-scale)*t)/1000) * input;
+  }
+  return val;
+}
+
+
 /**
  * mover the chassis with PID control
  *
- * @param tartget target of the move Distance in inches assume 4 inch wheels
+ * @param target the move Distance in inches assume 4 inch wheels
  */
 void basemovePID(double target) {
   char mytext[100];
   // move chassis in inches
-  MiniPID pid=MiniPID(0.1,0,0.1); // need to tune those three parameters
+  MiniPID pid=MiniPID(0.1,0,0.1); // need to tune those three PID parameters
   pid.setOutputLimits(-80,80); // set output lower and upper limit
   pid.setOutputRampRate(5); //how fast the motor reach max speed
-  double start=left_front.get_position(); // get current start positon in ticks
+  double start=left_front.get_position(); // get current start positon
   auto motorgear=left_front.get_gearing();
+  pros::motor_encoder_units_e encoderunit=left_front.get_encoder_units(); // get current motor encoder unit
+  left_front.set_encoder_units(MOTOR_ENCODER_DEGREES); // set motor encoder unit to degrees
   // convert the target in inch to tick
-  double targetTick = (target*360)/(4*M_PI)+start; // calculate the destination position in ticks
-  while (fabs(left_front.get_position()-targetTick)>10) {
+  double destination = (target*360)/(4*M_PI)+start; // calculate the destination position
+  while (fabs(left_front.get_position()-destination)>10) {
     double output=pid.getOutput(left_front.get_position(),
-        targetTick);
+        destination);
     // move the chassis motors
     left_back.move(output);
     left_front.move(output);
     right_back.move(output);
     right_front.move(output);
     // print information on the screen to debug
-    printf("base start %8.2f, target %8.2f, base %8.2f\n", start, targetTick,left_front.get_position());
+    printf("base start %8.2f, target %8.2f, base %8.2f\n", start, destination,left_front.get_position());
     sprintf(mytext, "base start %8.2f, target %8.2f\n, base %8.2f, output  base %8.2f\n",
-            start, targetTick, left_front.get_position(), output
+            start, destination, left_front.get_position(), output
          );
     lv_label_set_text(debugpid, mytext);
     pros::delay(20);
@@ -64,10 +97,11 @@ void basemovePID(double target) {
             && right_back.get_actual_velocity()==0
            )   break;
   }
-  // left_back.move(0);
-  // left_front.move(0);
-  // right_back.move(0);
-  // right_front.move(0);
+  left_front.set_encoder_units(encoderunit); // restore the motor encoder unit
+  left_back.move(0);
+  left_front.move(0);
+  right_back.move(0);
+  right_front.move(0);
 }
 
 
@@ -82,10 +116,10 @@ void baseturnPID(double target) {
   pid.setOutputLimits(-50,50); // set output lower and upper limit
   pid.setOutputRampRate(5); //how fast the motor reach max speed
   double start=gyro.get_value(); // get current/start angle from gyro
-  double turn = target*10+start; // destination angle
-  while (fabs(gyro.get_value()-turn)>3) {
+  double destination = target*10+start; // destination angle
+  while (fabs(gyro.get_value()-destination)>3) {
     double output=pid.getOutput(gyro.get_value(),
-        turn);
+        destination);
     // power the chassis motors to turn
     left_back.move(output);
     left_front.move(output);
@@ -94,8 +128,8 @@ void baseturnPID(double target) {
 
     // print information on the screen to debug
     char mytext[100];
-    printf("base start %8.2f, target %8.2f, gyro %8.2f\n", start, turn,gyro.get_value());
-    sprintf(mytext, "gyro start %8.2f, target %8.2f\n, gyro %8.2f\n", start, turn ,gyro.get_value()
+    printf("base start %8.2f, target %8.2f, gyro %8.2f\n", start, destination,gyro.get_value());
+    sprintf(mytext, "gyro start %8.2f, target %8.2f\n, gyro %8.2f\n", start, destination ,gyro.get_value()
          );
     lv_label_set_text(debugpid, mytext);
     pros::delay(20);
@@ -107,6 +141,10 @@ void baseturnPID(double target) {
             && right_back.get_actual_velocity()==0
            )   break;
   }
+  left_back.move(0);
+  left_front.move(0);
+  right_back.move(0);
+  right_front.move(0);
 }
 
 /**

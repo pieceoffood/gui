@@ -178,14 +178,16 @@ void opcontrol() {
 
     //print info to screen to debug
     sprintf(mytext,
-            "arm potentiameter: %d, arm %8.2f \n"
-            "tray: %8.2f, set zero: %d\n"
-            "leftfront:%8.2f velocity: %5.1f rightfront:%8.2f velocity: %5.1f\n"
-            "gyro:%8.2f\n",
-            potentiameter.get_value(), arm.get_position(),
-            tray.get_position(), limitswitch.get_value(),
-            left_front.get_position(), left_front.get_actual_velocity(), right_front.get_position(),  right_front.get_actual_velocity(),
-            gyro.get_value()
+      "%-10.10s, %8d, %-5.5s, %8.2f \n"
+      "%-10.10s, %8.2f, %-5.5s, %8d\n"
+      "%-10.10s, %8.2f %-5.5s, %5.1f"
+      "%-10.10s, %8.2f %-5.5s, %5.1f\n"
+      "%-10.10s, %8.2f \n",
+      "arm pot:", potentiameter.get_value(), "arm", arm.get_position(),
+      "tray: ", tray.get_position(), "reset", limitswitch.get_value(),
+      "leftfront", left_front.get_position(), "velocity", left_front.get_actual_velocity(),
+      "rightfront", right_front.get_position(),  "velocity", right_front.get_actual_velocity(),
+      "gyro", gyro.get_value()
     );
     lv_label_set_text(debugtxt, mytext);
 
@@ -197,8 +199,8 @@ void opcontrol() {
     }
 
     //arcade drive
-    int forwardback = master.get_analog (ANALOG_LEFT_Y);
-    int turn        = master.get_analog (ANALOG_RIGHT_X);
+    int forwardback = curveJoystick(master.get_analog (ANALOG_LEFT_Y));
+    int turn        = curveJoystick (master.get_analog (ANALOG_RIGHT_X));
 
     // chasis arcade
     left_front.move  (forwardback + turn );

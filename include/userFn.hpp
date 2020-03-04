@@ -13,4 +13,6 @@ void  tray_control(void*) ;
 void  arm_control(void*) ;
 
 void Tdisplay (void*);
+int curveJoystick(int input, double t , bool red );
+int curveJoystick(int input);
 #endif
