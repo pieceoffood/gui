@@ -65,9 +65,16 @@ void gui_btnm(void) {
   //The escape section prevents a press of the button being interpreted as a multipress of the button
   // Create a default button matrix* no repeat
   lv_obj_t *btnm = lv_btnm_create(tab1, NULL);
+  static lv_style_t sty;
+  //lv_style_copy( &sty, &lv_style_plain );
+  //sty.text.font = &lv_font_dejavu_10;
+  //sty.text.color = LV_COLOR_WHITE;
+  //sty.body.main_color = LV_COLOR_BLACK;
+  //sty.body.grad_color = LV_COLOR_BLACK;
+  //lv_btnm_set_style(btnm, LV_BTNM_STYLE_BG, &sty);
+
   lv_obj_set_size(btnm, lv_obj_get_width(tab1)-20,
-      lv_obj_get_height(tab1)-30);
-  //lv_obj_set_style(btnm,  style1);
+                  lv_obj_get_height(tab1)-30);
   lv_btnm_set_map(btnm, btnm_map);
   lv_btnm_set_action(btnm, btnm_action);
 }
@@ -127,7 +134,6 @@ void pid_btnm(void) {
   lv_obj_t *btnm = lv_btnm_create(tab4, NULL);
   lv_obj_set_size(btnm, lv_obj_get_width(tab1)-30,
       lv_obj_get_height(tab1)-30);
-  //lv_obj_set_style(btnm,  style1);
   lv_btnm_set_map(btnm, btnm_map);
   lv_btnm_set_action(btnm, pidbtnm_action);
 }
@@ -138,7 +144,13 @@ void lv_ex_tabview_1(void)
     // lvgl theme
     lv_theme_t *th = lv_theme_alien_init(360, NULL); //Set a HUE value and keep font default RED
     lv_theme_set_current(th);
+    //th = lv_theme_get_current();
     /*Create a Tab view object*/
+
+    static lv_style_t st;
+    lv_style_copy( &st, &lv_style_plain );
+    st.text.font = &lv_font_dejavu_10;
+    st.text.color = LV_COLOR_WHITE;
 
     tabview = lv_tabview_create(lv_scr_act(), NULL);
 		lv_tabview_set_sliding(tabview, false);
@@ -151,13 +163,15 @@ void lv_ex_tabview_1(void)
 
 
 
+
     /*Add content to the tabs*/
     //label = lv_label_create(tab1, NULL);
     //lv_label_set_text(label, "select your autonomous");
     //lv_obj_align(label, NULL, LV_ALIGN_IN_TOP_LEFT, 0, 0);
 
 		g_sb_label = lv_label_create(tab1, NULL);
-		lv_obj_set_style(g_sb_label, &lv_style_pretty_color);
+		//lv_obj_set_style(g_sb_label, &st);
+    lv_obj_set_style(g_sb_label, &lv_style_pretty_color);
 		lv_obj_align(g_sb_label, NULL, LV_ALIGN_CENTER, 0, 0);
     lv_label_set_text(g_sb_label, "auto select");
 
@@ -169,8 +183,10 @@ void lv_ex_tabview_1(void)
 
     //label = lv_label_create(tab3, NULL);
     //lv_label_set_text(label, NULL);
+
     debugtxt = lv_label_create(tab3, NULL);
-    //lv_obj_set_style(debugtxt, &style_txt);                    /*Set the created style*/
+    //lv_obj_set_style(debugtxt, &st);                    /*Set the created style*/
+
     lv_label_set_long_mode(debugtxt, LV_LABEL_LONG_BREAK);     /*Break the long lines*/
     lv_label_set_recolor(debugtxt, true);                      /*Enable re-coloring by commands in the text*/
     lv_label_set_align(debugtxt, LV_LABEL_ALIGN_LEFT);       /*Center aligned lines*/

@@ -12,16 +12,16 @@ void Tdisplay (void*) {
   char displaytext[100];
   while (1) {
     sprintf(displaytext,
-            "%-10.10s, %8d, %-5.5s, %8.2f \n"
-            "%-10.10s, %8.2f, %-5.5s, %8d\n"
-            "%-10.10s, %8.2f %-5.5s, %5.1f"
-            "%-10.10s, %8.2f %-5.5s, %5.1f\n"
-            "%-10.10s, %8.2f \n",
-            "arm pot:", potentiameter.get_value(), "arm", arm.get_position(),
-            "tray: ", tray.get_position(), "reset", limitswitch.get_value(),
-            "leftfront", left_front.get_position(), "velocity", left_front.get_actual_velocity(),
-            "rightfront", right_front.get_position(),  "velocity", right_front.get_actual_velocity(),
-            "gyro", gyro.get_value()
+      "%-6.6s %8d, %-5.5s %8.2f \n"
+      "%-6.6s %8.2f, %-5.5s %8d\n"
+      "%-6.6s %8.2f %-5.5s %5.1f\n"
+      "%-6.6s %8.2f %-5.5s %5.1f\n"
+      "%-6.6s %8.2f \n",
+      "armpot", potentiameter.get_value(), "arm", arm.get_position(),
+      "tray", tray.get_position(), "reset", limitswitch.get_value(),
+      "LF", left_front.get_position(), "Vel", left_front.get_actual_velocity(),
+      "RF", right_front.get_position(),  "Vel", right_front.get_actual_velocity(),
+      "gyro", gyro.get_value()
     );
     lv_label_set_text(debuglabel, displaytext);
     pros::delay(100);
