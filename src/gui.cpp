@@ -8,7 +8,7 @@
 // credit to https://github.com/timeconfusing/v5gui with modify
 // credit to https://github.com/kunwarsahni01/Vex-Autonomous-Selector
 
-// forward declaration of following two objects
+// forward declaration of following objects
 // text to diplay motor and others
 lv_obj_t * debugtxt ;
 lv_obj_t * tabview ;
@@ -59,7 +59,7 @@ break;
 
 void gui_btnm(void) {
   static const char * btnm_map[] = { "\2241 red big", "\2242 red small", "\2243 blue big", "\n",
-                                     "\2244 blue big", "\2245 Skill 1", "\2246 Skill 2", "" };
+                                     "\2244 blue small", "\2245 Skill 1", "\2246 Skill 2", "" };
   //The escape section prevents a press of the button being interpreted as a multipress of the button
   // Create a default button matrix* no repeat
   lv_obj_t *btnm = lv_btnm_create(tab1, NULL);
