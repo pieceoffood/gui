@@ -52,23 +52,25 @@ break;
     auton_sel = 6;
 break;
   }
-  lv_obj_align(g_sb_label, NULL, LV_ALIGN_IN_BOTTOM_MID, 0, -20);
+  lv_obj_align(g_sb_label, NULL, LV_ALIGN_CENTER, 0, 0);
 
   return LV_RES_OK; /*Return OK because the button matrix is not deleted*/
 }
 
 void gui_btnm(void) {
-  // Create a button descriptor string array w/ no repeat "\224"
-  //gui_btnm();
   static const char * btnm_map[] = { "\2241 red big", "\2242 red small", "\2243 blue big", "\n",
                                      "\2244 blue big", "\2245 Skill 1", "\2246 Skill 2", "" };
   //The escape section prevents a press of the button being interpreted as a multipress of the button
   // Create a default button matrix* no repeat
   lv_obj_t *btnm = lv_btnm_create(tab1, NULL);
   lv_obj_set_size(btnm, lv_obj_get_width(tab1)-20,
-                        lv_obj_get_height(tab1)-60);
+                        lv_obj_get_height(tab1)-30);
   lv_btnm_set_map(btnm, btnm_map);
   lv_btnm_set_action(btnm, btnm_action);
+
+  g_sb_label = lv_label_create(tab1, NULL);
+  lv_label_set_text(g_sb_label, "auto select");
+  lv_obj_align(g_sb_label, NULL,  LV_ALIGN_CENTER, 0, 0);
 }
 
 static lv_res_t pidbtnm_action(lv_obj_t * btnm, const char * bmtxt) {
@@ -111,23 +113,25 @@ static lv_res_t pidbtnm_action(lv_obj_t * btnm, const char * bmtxt) {
   );
   lv_label_set_text(pid_label, pidtext);
   // must be after set_text
-  lv_obj_align(pid_label, NULL, LV_ALIGN_IN_BOTTOM_MID, 0, -20);
+  lv_obj_align(pid_label, btnm, LV_ALIGN_OUT_BOTTOM_MID,0,0);
   return LV_RES_OK; /*Return OK because the button matrix is not deleted*/
 }
 
 
 void pid_btnm(void) {
   // Create a button descriptor string array w/ no repeat "\224"
-  //gui_btnm();
-  static const char * btnm_map[] = { "\2241 P+", "\2243 I+", "\2245 D+", "\2247 M+", "\n",
-                                     "\2242 P-", "\2244 I-", "\2246 D-", "\2248 M-","" };
+  static const char * btnm_map[] = { "1 P+", "3 I+", "5 D+", "7 M+", "\n",
+                                     "2 P-", "4 I-", "6 D-", "8 M-","" };
 
-  // Create a default button matrix* no repeat
   lv_obj_t *btnm = lv_btnm_create(tab4, NULL);
   lv_obj_set_size(btnm, lv_obj_get_width(tab4)-30,
                         lv_obj_get_height(tab4)-60);
   lv_btnm_set_map(btnm, btnm_map);
   lv_btnm_set_action(btnm, pidbtnm_action);
+
+  pid_label = lv_label_create(tab4, NULL);
+  lv_label_set_text(pid_label, "PID tuning");
+  lv_obj_align(pid_label, btnm, LV_ALIGN_OUT_BOTTOM_MID,0,0);
 }
 
 
@@ -149,12 +153,6 @@ void lv_ex_tabview_1(void)
     tab3 = lv_tabview_add_tab(tabview, "Driver");
     tab4 = lv_tabview_add_tab(tabview, "PID");
 
-		g_sb_label = lv_label_create(tab1, NULL);
-    lv_obj_set_style(g_sb_label, &lv_style_pretty_color);
-		lv_obj_align(g_sb_label, NULL, LV_ALIGN_IN_BOTTOM_MID, 0, -20);
-    lv_label_set_text(g_sb_label, "auto select");
-
-
     debuglabel = lv_label_create(tab2, NULL);
     lv_label_set_text(debuglabel, "auto debug");
     debugpid = lv_label_create(tab2, NULL);
@@ -168,11 +166,6 @@ void lv_ex_tabview_1(void)
     lv_obj_set_width(debugtxt, 500);                           /*Set a width*/
     lv_obj_align(debugtxt, NULL, LV_ALIGN_IN_TOP_LEFT, 10, 20);      /*Align to center*/
 
-
-    pid_label = lv_label_create(tab4, NULL);
-		lv_obj_set_style(pid_label, &lv_style_pretty_color);
-    lv_label_set_text(pid_label, "PID tuning");
-    lv_obj_align(pid_label, NULL, LV_ALIGN_IN_BOTTOM_MID, 0, -20);
 
     gui_btnm();
     pid_btnm();
