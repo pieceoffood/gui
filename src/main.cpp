@@ -250,6 +250,7 @@ void opcontrol() {
       fprintf(sdfile, "pros:delay(%d);\n", deltaTime);
     }
     fclose(sdfile);
+    odometer();
 
     //std::ofstream LogFile;
     //LogFile.open("/usd/logfile.txt");

@@ -1,5 +1,6 @@
 #include "gui.h"
 #include "main.h"
+#include "motor.hpp"
 #include <stdio.h>
 #include <stdarg.h>
 #include <stdlib.h>
@@ -58,8 +59,8 @@ break;
 }
 
 void gui_btnm(void) {
-  static const char * btnm_map[] = { "\2241 red big", "\2242 red small", "\2243 blue big", "\n",
-                                     "\2244 blue small", "\2245 Skill 1", "\2246 Skill 2", "" };
+  static const char * btnm_map[] = { "\2241 red big", "\2242 red small", "\2243 blue big", "\2244 blue small", "\n",
+                                     "\2245 Skill 1", "\2246 Skill 2", "" };
   //The escape section prevents a press of the button being interpreted as a multipress of the button
   // Create a default button matrix* no repeat
   lv_obj_t *btnm = lv_btnm_create(tab1, NULL);
@@ -135,6 +136,47 @@ void pid_btnm(void) {
 }
 
 
+void odometer() {
+  /*Set the values*/
+  lv_gauge_set_value(gauge1, 0, fabs(left_front.get_actual_velocity()));
+  lv_gauge_set_value(gauge1, 1, fabs(right_front.get_actual_velocity()));
+  lv_gauge_set_value(gauge1, 2, fabs(left_back.get_actual_velocity()));
+  lv_gauge_set_value(gauge1, 3, fabs(right_back.get_actual_velocity()));
+}
+
+void lv_ex_gauge_1(void)
+{
+    /*Create a style*/
+    static lv_style_t style;
+    lv_style_copy(&style, &lv_style_pretty_color);
+    style.body.main_color = lv_color_hex3(0x666);     /*Line color at the beginning*/
+    style.body.grad_color =  lv_color_hex3(0x666);    /*Line color at the end*/
+    // style.body.padding.left = 10;                      /*Scale line length*/
+    style.body.padding.inner = 8 ;                    /*Scale label padding*/
+    style.body.border.color = lv_color_hex3(0x333);   /*Needle middle circle color*/
+    style.line.width = 3;
+    // style.text.color = lv_color_hex3(0x333);
+    style.text.color = LV_COLOR_WHITE;
+    style.line.color = LV_COLOR_RED;                  /*Line color after the critical value*/
+
+    /*Describe the color for the needles*/
+    static lv_color_t needle_colors[4];
+    needle_colors[0] = LV_COLOR_BLUE;
+    needle_colors[1] = LV_COLOR_ORANGE;
+    needle_colors[2] = LV_COLOR_PURPLE;
+    needle_colors[3] = LV_COLOR_WHITE;
+
+    /*Create a gauge*/
+    gauge1 = lv_gauge_create(tab5, NULL);
+    // lv_gauge_set_style(gauge1, LV_GAUGE_STYLE_MAIN, &style);
+    lv_gauge_set_range(gauge1, 0, 200);
+    lv_gauge_set_critical_value(gauge1, 160);
+    lv_gauge_set_needle_count(gauge1, 4, needle_colors);
+    lv_obj_set_size(gauge1, 150, 150);
+    lv_obj_align(gauge1, NULL, LV_ALIGN_CENTER, 0, 20);
+
+}
+
 void lv_ex_tabview_1(void)
 {
     // lvgl theme
@@ -152,6 +194,7 @@ void lv_ex_tabview_1(void)
     tab2 = lv_tabview_add_tab(tabview, "Auto");
     tab3 = lv_tabview_add_tab(tabview, "Driver");
     tab4 = lv_tabview_add_tab(tabview, "PID");
+    tab5 = lv_tabview_add_tab(tabview, "Odometer");
 
     debuglabel = lv_label_create(tab2, NULL);
     lv_label_set_text(debuglabel, "auto debug");
@@ -169,4 +212,5 @@ void lv_ex_tabview_1(void)
 
     gui_btnm();
     pid_btnm();
+    lv_ex_gauge_1();
 }
