@@ -193,7 +193,7 @@ void opcontrol() {
       "RB", right_back.get_position(),  "Vel", right_back.get_actual_velocity(),
       "gyro", gyro.get_value()
     );
-    lv_label_set_text(debugtxt, mytext);
+    lv_label_set_text(debugdrive, mytext);
 
 
     // update control screen very 1 second

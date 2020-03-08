@@ -23,7 +23,7 @@ void Tdisplay (void*) {
       "RF", right_front.get_position(),  "Vel", right_front.get_actual_velocity(),
       "gyro", gyro.get_value()
     );
-    lv_label_set_text(debuglabel, displaytext);
+    lv_label_set_text(debugauto, displaytext);
     pros::delay(100);
   }
 }
@@ -173,7 +173,7 @@ void armPID(double target) {
     sprintf(mytext, "base start %8.2f\n, target %8.2f\n, base %8.2f\n, output  base %8.2f\n",
             start, target, arm.get_position(), output
          );
-    lv_label_set_text(debuglabel, mytext);
+    lv_label_set_text(debugauto, mytext);
     pros::delay(10);
   }
 }

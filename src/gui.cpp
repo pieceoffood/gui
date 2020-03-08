@@ -11,9 +11,9 @@
 
 // forward declaration of following objects
 // text to diplay motor and others
-lv_obj_t * debugtxt ;
+lv_obj_t * debugdrive ;
 lv_obj_t * tabview ;
-lv_obj_t * debuglabel ;
+lv_obj_t * debugauto ;
 lv_obj_t * debugpid;
 
 int auton_sel = 0;
@@ -196,18 +196,18 @@ void lv_ex_tabview_1(void)
     tab4 = lv_tabview_add_tab(tabview, "PID");
     tab5 = lv_tabview_add_tab(tabview, "Odometer");
 
-    debuglabel = lv_label_create(tab2, NULL);
-    lv_label_set_text(debuglabel, "auto debug");
+    debugauto = lv_label_create(tab2, NULL);
+    lv_label_set_text(debugauto, "auto debug");
     debugpid = lv_label_create(tab2, NULL);
-    lv_obj_align(debugpid, debuglabel, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 80);
+    lv_obj_align(debugpid, debugauto, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 80);
 
-    debugtxt = lv_label_create(tab3, NULL);
-    lv_label_set_long_mode(debugtxt, LV_LABEL_LONG_BREAK);     /*Break the long lines*/
-    lv_label_set_recolor(debugtxt, true);                      /*Enable re-coloring by commands in the text*/
-    lv_label_set_align(debugtxt, LV_LABEL_ALIGN_LEFT);       /*Center aligned lines*/
-    lv_label_set_text(debugtxt, NULL);
-    lv_obj_set_width(debugtxt, 500);                           /*Set a width*/
-    lv_obj_align(debugtxt, NULL, LV_ALIGN_IN_TOP_LEFT, 10, 20);      /*Align to center*/
+    debugdrive = lv_label_create(tab3, NULL);
+    lv_label_set_long_mode(debugdrive, LV_LABEL_LONG_BREAK);     /*Break the long lines*/
+    lv_label_set_recolor(debugdrive, true);                      /*Enable re-coloring by commands in the text*/
+    lv_label_set_align(debugdrive, LV_LABEL_ALIGN_LEFT);       /*Center aligned lines*/
+    lv_label_set_text(debugdrive, NULL);
+    lv_obj_set_width(debugdrive, 500);                           /*Set a width*/
+    lv_obj_align(debugdrive, NULL, LV_ALIGN_IN_TOP_LEFT, 10, 20);      /*Align to center*/
 
 
     gui_btnm();
