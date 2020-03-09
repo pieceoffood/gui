@@ -28,6 +28,8 @@ prosv5 v5 rm-file slot_4.bin --erase-all
 void initialize() {
   pros::delay(10);
 	lv_ex_tabview_1();
+  pros::delay(100);
+  pros::Task T_display(Tdisplay);
 
 }
 
@@ -64,7 +66,7 @@ void competition_initialize() {}
  */
 void autonomous() {
   lv_tabview_set_tab_act(tabview, 1, LV_ANIM_NONE);
-  pros::Task T_display(Tdisplay);
+
 
     switch (auton_sel) {
       case 1:
