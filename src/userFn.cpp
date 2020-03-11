@@ -9,11 +9,13 @@
 // task to print motors and sensors information on the screen to debug
 // must use void* in parameters
 void Tdisplay (void*) {
-  char displaytext[100];
+  char displaytext[200];
   while (1) {
     sprintf(displaytext,
       "%-6.6s %8d, %-5.5s %8.2f \n"
       "%-6.6s %8.2f, %-5.5s %8d\n"
+      "%-6.6s %8.2f %-5.5s %5.1f\n"
+      "%-6.6s %8.2f %-5.5s %5.1f\n"
       "%-6.6s %8.2f %-5.5s %5.1f\n"
       "%-6.6s %8.2f %-5.5s %5.1f\n"
       "%-6.6s %8.2f \n",
@@ -21,6 +23,8 @@ void Tdisplay (void*) {
       "tray", tray.get_position(), "reset", limitswitch.get_value(),
       "LF", left_front.get_position(), "Vel", left_front.get_actual_velocity(),
       "RF", right_front.get_position(),  "Vel", right_front.get_actual_velocity(),
+      "LB", left_back.get_position(), "Vel", left_back.get_actual_velocity(),
+      "RB", right_back.get_position(),  "Vel", right_back.get_actual_velocity(),
       "gyro", gyro.get_value()
     );
     lv_label_set_text(debugauto, displaytext);
@@ -84,9 +88,9 @@ void basemovePID(double target) {
     right_front.move(output);
     // print information on the screen to debug
     printf("base start %8.2f, target %8.2f, base %8.2f\n", start, destination,left_front.get_position());
-    sprintf(mytext, "base start %8.2f, target %8.2f\n, base %8.2f, output  base %8.2f\n",
+    sprintf(mytext, "start at %8.2f, target %8.2f\n, base now %8.2f, output %8.2f\n",
             start, destination, left_front.get_position(), output
-         );
+           );
     lv_label_set_text(debugpid, mytext);
     pros::delay(20);
     // exit while loop when the motors stopped because of obstacle before reaching target
@@ -129,8 +133,9 @@ void baseturnPID(double target) {
     // print information on the screen to debug
     char mytext[100];
     printf("base start %8.2f, target %8.2f, gyro %8.2f\n", start, destination,gyro.get_value());
-    sprintf(mytext, "gyro start %8.2f, target %8.2f\n, gyro %8.2f\n", start, destination ,gyro.get_value()
-         );
+    sprintf(mytext, "gyro start %8.2f, target %8.2f\n, gyro now %8.2f, output  %8.2f\n",
+                    start, destination, gyro.get_value(), output
+           );
     lv_label_set_text(debugpid, mytext);
     pros::delay(20);
     // exit while loop when the motors stopped because of obstacle before reaching target

@@ -11,7 +11,6 @@
 
 // forward declaration of following objects
 // text to diplay motor and others
-lv_obj_t * debugdrive ;
 lv_obj_t * tabview ;
 lv_obj_t * debugauto ;
 lv_obj_t * debugpid;
@@ -191,23 +190,22 @@ void lv_ex_tabview_1(void)
 
     /*Add 4 tabs (the tabs are page (lv_page) and can be scrolled*/
 		tab1 = lv_tabview_add_tab(tabview, "Select");
-    tab2 = lv_tabview_add_tab(tabview, "Auto");
-    tab3 = lv_tabview_add_tab(tabview, "Driver");
+    tab2 = lv_tabview_add_tab(tabview, "debug");
+    tab3 = lv_tabview_add_tab(tabview, "PID debug");
     tab4 = lv_tabview_add_tab(tabview, "PID");
     tab5 = lv_tabview_add_tab(tabview, "Odometer");
 
     debugauto = lv_label_create(tab2, NULL);
+    lv_label_set_long_mode(debugauto, LV_LABEL_LONG_BREAK);     /*Break the long lines*/
+    lv_label_set_recolor(debugauto, true);                      /*Enable re-coloring by commands in the text*/
+    lv_label_set_align(debugauto, LV_LABEL_ALIGN_LEFT);       /*Center aligned lines*/
+    lv_obj_set_width(debugauto, 500);                           /*Set a width*/
+    lv_obj_align(debugauto, NULL, LV_ALIGN_IN_TOP_LEFT, 10, 0);      /*Align to center*/
     lv_label_set_text(debugauto, "auto debug");
-    debugpid = lv_label_create(tab2, NULL);
-    lv_obj_align(debugpid, debugauto, LV_ALIGN_OUT_BOTTOM_LEFT, 0, 80);
 
-    debugdrive = lv_label_create(tab3, NULL);
-    lv_label_set_long_mode(debugdrive, LV_LABEL_LONG_BREAK);     /*Break the long lines*/
-    lv_label_set_recolor(debugdrive, true);                      /*Enable re-coloring by commands in the text*/
-    lv_label_set_align(debugdrive, LV_LABEL_ALIGN_LEFT);       /*Center aligned lines*/
-    lv_label_set_text(debugdrive, NULL);
-    lv_obj_set_width(debugdrive, 500);                           /*Set a width*/
-    lv_obj_align(debugdrive, NULL, LV_ALIGN_IN_TOP_LEFT, 10, 20);      /*Align to center*/
+    debugpid = lv_label_create(tab3, NULL);
+    lv_obj_align(debugpid, NULL, LV_ALIGN_IN_TOP_LEFT, 10, 0);
+    lv_label_set_text(debugpid, "PID debug");
 
 
     gui_btnm();

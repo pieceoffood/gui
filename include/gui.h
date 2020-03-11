@@ -8,7 +8,6 @@ extern float kI;
 extern float kD;
 
 extern lv_obj_t * tabview;
-extern lv_obj_t * debugdrive;
 extern lv_obj_t * debugpid;
 extern lv_obj_t * debugauto;
 

@@ -164,39 +164,17 @@ void opcontrol() {
   * brain will not keep telling motor to stop
   * thus allow other task/macro to control the same motor without conflict
   */
-  bool RollerUserAllow = true;
+  bool RollerUserAllow = false;
 
-  lv_tabview_set_tab_act(tabview, 2, LV_ANIM_NONE);
-  char mytext[100];
-
+  lv_tabview_set_tab_act(tabview, 1, LV_ANIM_NONE);
 
   master.clear();
   master.print(0, 0, "VEX");
   auto timeFlag=pros::millis();
   pros::Task tray_control_t(tray_control);
   pros::Task t_arm(arm_control);
-  //pros::Task T_display(Tdisplay);
+
 	while (true) {
-
-    //print info to screen to debug
-    sprintf(mytext,
-      "%-6.6s %8d, %-5.5s %8.2f \n"
-      "%-6.6s %8.2f, %-5.5s %8d\n"
-      "%-6.6s %8.2f %-5.5s %5.1f\n"
-      "%-6.6s %8.2f %-5.5s %5.1f\n"
-      "%-6.6s %8.2f %-5.5s %5.1f\n"
-      "%-6.6s %8.2f %-5.5s %5.1f\n"
-      "%-6.6s %8.2f \n",
-      "armpot", potentiameter.get_value(), "arm", arm.get_position(),
-      "tray", tray.get_position(), "reset", limitswitch.get_value(),
-      "LF", left_front.get_position(), "Vel", left_front.get_actual_velocity(),
-      "RF", right_front.get_position(),  "Vel", right_front.get_actual_velocity(),
-      "LB", left_back.get_position(), "Vel", left_back.get_actual_velocity(),
-      "RB", right_back.get_position(),  "Vel", right_back.get_actual_velocity(),
-      "gyro", gyro.get_value()
-    );
-    lv_label_set_text(debugdrive, mytext);
-
 
     // update control screen very 1 second
     if(pros::millis()-timeFlag>=1000){
