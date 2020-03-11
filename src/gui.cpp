@@ -207,7 +207,6 @@ void lv_ex_tabview_1(void)
     lv_obj_align(debugpid, NULL, LV_ALIGN_IN_TOP_LEFT, 10, 0);
     lv_label_set_text(debugpid, "PID debug");
 
-
     gui_btnm();
     pid_btnm();
     lv_ex_gauge_1();
